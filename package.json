@@ -17,6 +17,7 @@
 		"expo-blur": "^11.0.0",
 		"expo-camera": "^12.1.0",
 		"expo-constants": "^13.0.1",
+		"expo-file-system": "~13.1.2",
 		"expo-haptics": "~11.1.0",
 		"expo-keep-awake": "~10.0.1",
 		"expo-screen-orientation": "~4.1.1",

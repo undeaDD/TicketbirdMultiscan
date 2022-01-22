@@ -4,10 +4,13 @@ import { NavigationContainer } from "@react-navigation/native";
 import { useColorScheme } from "react-native";
 import { StatusBar } from "expo-status-bar";
 import { StyleSheet } from "react-native";
+import { LogBox } from "react-native";
 import { BlurView } from "expo-blur";
 
 import { Scanner, ScannerOptions } from "./screens/scanner/Scanner";
 import { History, HistoryOptions } from "./screens/history/History";
+
+LogBox.ignoreAllLogs();
 const Tab = createBottomTabNavigator();
 
 export default function App() {

@@ -7,7 +7,7 @@
 		"version": "1.0.0",
 		"orientation": "portrait",
 		"userInterfaceStyle": "automatic",
-		"backgroundColor": "#ffffff",
+		"backgroundColor": "#000000",
 		"icon": "./assets/icon.png",
 		"developmentClient": {
 			"silentLaunch": true
