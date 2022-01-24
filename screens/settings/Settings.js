@@ -1,11 +1,12 @@
 import { FlatList, View, Text, StyleSheet } from "react-native";
-import { MaterialCommunityIcons } from "@expo/vector-icons";
+import { MaterialIcons } from "@expo/vector-icons";
+import React from "react";
 
-export const HistoryOptions = {
-	title: "Verlauf",
-	tabBarLabel: "Verlauf",
+export const SettingsOptions = {
+	title: "Einstellungen",
+	tabBarLabel: "Einstellungen",
 	tabBarIcon: ({ color, size }) => (
-		<MaterialCommunityIcons name="bookshelf" size={size} color={color} />
+		<MaterialIcons name="settings" size={size} color={color} />
 	),
 };
 
@@ -15,7 +16,7 @@ const Item = ({ title }) => (
 	</View>
 );
 
-export function History() {
+export function Settings() {
 	const renderItem = ({ item }) => <Item title={item.title} />;
 
 	return <FlatList data={data} renderItem={renderItem} keyExtractor={item => item.id} />;

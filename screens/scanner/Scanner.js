@@ -1,13 +1,12 @@
-import React, { useState, useEffect, useRef } from "react";
-import { Text, View, StyleSheet, Platform, useColorScheme, TouchableOpacity, useWindowDimensions } from "react-native";
-import { useBottomTabBarHeight } from '@react-navigation/bottom-tabs';
-import { BarCodeScanner } from "expo-barcode-scanner";
-import * as FileSystem from 'expo-file-system';
-import { Camera } from "expo-camera";
+import { View, Platform, useColorScheme, TouchableOpacity, useWindowDimensions, Alert } from "react-native";
 import { MaterialIcons, MaterialCommunityIcons } from "@expo/vector-icons";
-import * as Haptics from 'expo-haptics';
-import Constants from "expo-constants";
+import { useBottomTabBarHeight } from "@react-navigation/bottom-tabs";
+import React, { useState, useEffect, useRef } from "react";
+import { BarCodeScanner } from "expo-barcode-scanner";
+import { ScannerStyles as Styles } from "./Styles";
+import * as Haptics from "expo-haptics";
 import { BlurView } from "expo-blur";
+import { Camera } from "expo-camera";
 
 export const ScannerOptions = {
 	title: "Scanner",
@@ -18,82 +17,74 @@ export const ScannerOptions = {
 	),
 };
 
-export function Scanner() {
+export function Scanner({navigation}) {
 	const scheme = useColorScheme();
 	const width = useWindowDimensions().width;
 	const tabBarHeight = useBottomTabBarHeight();
-	const [hasPermission, setHasPermission] = useState(null);
 	const [flashMode, setFlashMode] = useState(false);
 	const cameraRef = useRef(null);
 
 	useEffect(() => {
 		(async () => {
 			const { status } = await BarCodeScanner.requestPermissionsAsync();
-			setHasPermission(status === "granted");
+			if (status === undefined || status !== "granted") {
+				Alert.alert("Kein Zugriff", "Die App benötigt Zugriff auf die Kamera, um die QRCodes einzuscannen.", [{
+					style: "cancel",
+					text: "Okay",
+				}]);
+			}
 		})();
 	}, []);
 
 	const toggleFlash = async () => {
-		Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-		setFlashMode(!flashMode)
-	}
+		Haptics.impactAsync("light");
+		setFlashMode(!flashMode);
+	};
 
 	const takePhoto = async () => {
-		Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy);
+		Haptics.impactAsync("heavy");
 		const photo = await cameraRef.current.takePictureAsync();
-		BarCodeScanner.scanFromURLAsync(photo.uri, [BarCodeScanner.Constants.BarCodeType.qr]).then( (result) => {
-			FileSystem.deleteAsync(photo.uri);
-			const data = result.map((obj) => obj.data);
-			console.log("Ergebnisse: " + data);
-			alert("Ergebnisse: " + data);
-		});
-	}
-
-	if (hasPermission === null) {
-		return <Text>Requesting for camera permission</Text>;
-	}
-	if (hasPermission === false) {
-		return <Text>No access to camera</Text>;
-	}
+    	navigation.navigate("Details", {photo: photo})
+	};
 
 	return (
-		<View style={StyleSheet.absoluteFillObject}>
+		<View style={Styles.container}>
 			<Camera
 				ref={cameraRef}
-				flashMode={flashMode ? Camera.Constants.FlashMode.on : Camera.Constants.FlashMode.off}
-				type={Platform.OS === "web" ? Camera.Constants.Type.front : Camera.Constants.Type.back}
+				useCamera2Api={true}
+				flashMode={flashMode ? "on" : "off"}
+				type={Platform.OS === "web" ? "front" : "back"}
 				videoStabilizationMode={Camera.Constants.VideoStabilization.auto}
-				style={StyleSheet.absoluteFillObject}
+				style={Styles.camera}
 			/>
 			<BlurView
-				tint={scheme === "dark" ? "dark" : "light"}
 				intensity={100}
-				style={{ height: Constants.statusBarHeight, width: "100%" }}
+				tint={scheme === "dark" ? "dark" : "light"}
+				style={Styles.statusBarBackground}
 			/>
 			<TouchableOpacity 
-				style={{width: 30, height: 30, margin: 15 }}
 				activeOpacity={0.9}
 				onPress={toggleFlash}
+				style={Styles.flashButtonContainer}
 			>
 				<MaterialCommunityIcons
 					name="flash-circle"
 					size={30}
-					color="black"
-					style={{
-						backgroundColor: flashMode ? "yellow" : "white",
-						borderRadius: 15,
-						width: 30,
-						overflow: "hidden",
-						height: 30,
-					}}
+					color="#000000dd"
+					style={[
+						{backgroundColor: flashMode ? "#ffff00" : "#ffffff"},
+						Styles.flashButtonContent
+					]}
 				/>
 			</TouchableOpacity>
 			<TouchableOpacity 
-				style={{width: 70, height: 70, bottom: tabBarHeight + 10, borderColor: "white", borderWidth: 4, borderRadius: 35, left: width / 2 - 35, position: "absolute", backgroundColor: "black"}}
 				activeOpacity={0.5}
 				onPress={takePhoto}
-			>
-			</TouchableOpacity>
+				style={[
+					{bottom: tabBarHeight + 10, left: width / 2 - 35},
+					Styles.takePictureButton
+				]}
+			/>
 		</View>
 	);
 }
