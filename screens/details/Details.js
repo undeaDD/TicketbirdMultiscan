@@ -2,8 +2,9 @@ import { View, Image, ActivityIndicator, Dimensions, useColorScheme, Alert } fro
 import { useHeaderHeight } from '@react-navigation/elements';
 import { BarCodeScanner } from "expo-barcode-scanner";
 import { MaterialIcons } from "@expo/vector-icons";
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { DetailsStyles } from "./DetailsStyles";
+import { WebView } from 'react-native-webview';
 import * as FileSystem from 'expo-file-system';
 import { executeAlgorithm } from "../../Logic";
 import { BlurView } from "expo-blur";
@@ -38,9 +39,35 @@ const AsyncAlert = async () => new Promise((resolve) => {
 	}], { cancelable: false });
 });
 
+const onNavigationStateChange = (newNavigationState) => {
+
+}
+
+const onMessage = (messageEvent) => {
+
+}
+
+const onWebViewError = () => {
+	
+}
+
+const onWebViewHTTPError = () => {
+
+}
+
+const onShouldStartLoadWithRequest = () => {
+	return true;
+}
+
+const initialInjectedJavaScript = `
+
+true;
+`;
+
 export function Details({route, navigation}) {
 	const [codes, setCodes] = useState([]);
 	const headerHeight = useHeaderHeight();
+	const webViewRef = useRef(null);
 	const scheme = useColorScheme();
 	const { photo } = route.params;
 
@@ -66,6 +93,31 @@ export function Details({route, navigation}) {
 
 	return (
 		<View style={DetailsStyles.container}>
+			<WebView
+				ref={webViewRef}
+				originWhitelist={['*']}
+				style={DetailsStyles.webView}
+				source={{ uri: 'about:blank' }}
+				scalesPageToFit={false}
+				mediaPlaybackRequiresUserAction={false}
+				allowsInlineMediaPlayback={true}
+				decelerationRate={"normal"}
+				useWebKit={true}
+				showsHorizontalScrollIndicator={false}
+				contentMode={"mobile"}
+				setSupportMultipleWindows={false}
+				onShouldStartLoadWithRequest={onShouldStartLoadWithRequest}
+				javaScriptCanOpenWindowsAutomatically={false}
+				injectedJavaScriptBeforeContentLoaded={initialInjectedJavaScript}
+				onError={onWebViewError}
+                onHttpError={onWebViewHTTPError}
+				onMessage={onMessage}
+				onNavigationStateChange={onNavigationStateChange}
+				mixedContentMode={"always"}
+				javaScriptEnabled={true}
+				cacheEnabled={false}
+				incognito={false}
+			/>
 			<Image 
 				source={{uri: photo.uri}} 
 				style={DetailsStyles.backgroundImage}

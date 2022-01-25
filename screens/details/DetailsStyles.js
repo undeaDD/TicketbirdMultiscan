@@ -4,6 +4,10 @@ export const DetailsStyles = StyleSheet.create({
 	container: {
 		...StyleSheet.absoluteFillObject
 	},
+    webView: {
+        height: 1,
+        width: 1
+    },
     backgroundImage: {
         ...StyleSheet.absoluteFillObject
     },
