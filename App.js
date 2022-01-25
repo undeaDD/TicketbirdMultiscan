@@ -4,7 +4,7 @@ import { Scanner, ScannerOptions } from "./screens/scanner/Scanner";
 import { Details, DetailsOptions } from "./screens/details/Details";
 import { DefaultTheme, DarkTheme } from "@react-navigation/native";
 import { NavigationContainer } from "@react-navigation/native";
-import { createStackNavigator } from "@react-navigation/stack";
+import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { useColorScheme } from "react-native";
 import { StatusBar } from "expo-status-bar";
 import { StyleSheet } from "react-native";
@@ -14,7 +14,7 @@ import React from "react";
 
 LogBox.ignoreAllLogs();
 const Tab = createBottomTabNavigator();
-const Stack = createStackNavigator();
+const Stack = createNativeStackNavigator();
 
 export default function App() {
 	const scheme = useColorScheme();
@@ -22,7 +22,11 @@ export default function App() {
 
 	return (
 		<NavigationContainer theme={theme}>
-			<Stack.Navigator>
+			<Stack.Navigator
+				screenOptions={{
+					headerTransparent: true,
+				}}
+			>
 				<Stack.Screen name="Tab" component={TabNavigator} options={TabNavigatorOptions}/>
 				<Stack.Screen name="Details" component={Details} options={DetailsOptions}/>
 			</Stack.Navigator>
