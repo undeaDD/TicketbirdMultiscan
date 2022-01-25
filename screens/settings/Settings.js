@@ -1,4 +1,4 @@
-import { FlatList, View, Text, StyleSheet } from "react-native";
+import { FlatList, View, StyleSheet } from "react-native";
 import { MaterialIcons } from "@expo/vector-icons";
 import React from "react";
 
@@ -10,13 +10,13 @@ export const SettingsOptions = {
 	),
 };
 
-const Item = ({ title }) => (
+const Item = () => (
 	<View style={styles.item}>
 	</View>
 );
 
 export function Settings() {
-	const renderItem = ({ item }) => <Item title={item.title} />;
+	const renderItem = () => <Item/>;
 
 	return <FlatList data={data} renderItem={renderItem} keyExtractor={item => item.id} />;
 }

@@ -1,12 +1,11 @@
 import { View, Image, ActivityIndicator, Dimensions, useColorScheme, Alert } from "react-native";
-import { useHeaderHeight } from '@react-navigation/elements';
+import { useHeaderHeight } from "@react-navigation/elements";
 import { BarCodeScanner } from "expo-barcode-scanner";
 import { MaterialIcons } from "@expo/vector-icons";
 import React, { useState, useEffect, useRef } from "react";
 import { DetailsStyles } from "./DetailsStyles";
-import { WebView } from 'react-native-webview';
-import * as FileSystem from 'expo-file-system';
-import { executeAlgorithm } from "../../Logic";
+import { WebView } from "react-native-webview";
+import * as FileSystem from "expo-file-system";
 import { BlurView } from "expo-blur";
 
 export const DetailsOptions = {
@@ -18,7 +17,7 @@ const getImageSize = async uri => new Promise(resolve => {
 	Image.getSize(uri, (width, height) => {
 		resolve({width, height});
 	});
-})
+});
 
 const applyingScale = (code, scale) => {
 	const obj = {};
@@ -29,7 +28,7 @@ const applyingScale = (code, scale) => {
 	obj.success = false;
 	obj.icon = "cancel";
 	return obj;
-}
+};
 
 const AsyncAlert = async () => new Promise((resolve) => {
 	Alert.alert("Falsche Orientierung", "Die App unterstüzt nur Fotos im 'hochkant' Format.", [{
@@ -39,25 +38,30 @@ const AsyncAlert = async () => new Promise((resolve) => {
 	}], { cancelable: false });
 });
 
+const wait = (ms) => 
+	new Promise(resolve => 
+		setTimeout(() => resolve(true), ms)
+	);
+
 const onNavigationStateChange = (newNavigationState) => {
 
-}
+};
 
 const onMessage = (messageEvent) => {
 
-}
+};
 
 const onWebViewError = () => {
 	
-}
+};
 
 const onWebViewHTTPError = () => {
 
-}
+};
 
 const onShouldStartLoadWithRequest = () => {
 	return true;
-}
+};
 
 const initialInjectedJavaScript = `
 
@@ -66,6 +70,7 @@ true;
 
 export function Details({route, navigation}) {
 	const [codes, setCodes] = useState([]);
+	const [processing, setProcessing] = useState(false);
 	const headerHeight = useHeaderHeight();
 	const webViewRef = useRef(null);
 	const scheme = useColorScheme();
@@ -74,7 +79,7 @@ export function Details({route, navigation}) {
 	useEffect(() => {
 		(async () => {
 			const {width, height} = await getImageSize(photo.uri);
-			const scale = Dimensions.get('window').width / width;
+			const scale = Dimensions.get("window").width / width;
 
 			if (width > height) {
 				await AsyncAlert();
@@ -83,9 +88,49 @@ export function Details({route, navigation}) {
 				return;
 			}
 
-			var result = await BarCodeScanner.scanFromURLAsync(photo.uri, [BarCodeScanner.Constants.BarCodeType.qr]);
-			result = result.map((code) => applyingScale(code, scale));
-			result = executeAlgorithm(result);
+			var scans = await BarCodeScanner.scanFromURLAsync(photo.uri, [BarCodeScanner.Constants.BarCodeType.qr]);
+			var result = [];
+
+			for (const qrCode of scans) {
+				var code = applyingScale(qrCode, scale)
+
+				if (!code.data.startsWith("https://")) {
+					code.success = false;
+					code.icon = "link-off";
+					result.push(code);
+					continue;
+				}
+				
+				code.success = true;
+				code.icon = "check";
+
+				// await new Promise(r => setTimeout(r, 2000));
+
+				// webView has js injection by default
+					
+				// check if login page:
+				//  if (document.getElementById("passwordform-password")) { /*...*/ }
+
+				// set pw: 
+				// document.getElementById("passwordform-password").value  = "test123123";
+					
+				// click submit login button
+				// document.querySelectorAll('button[type=submit]')[0].click();
+
+				// click NEGATIVE button
+				// document.getElementsByClassName("btn btn-success btn-lg btn-block")[0].click();
+
+				// [optional] click POSITIVE button
+				// document.getElementsByClassName("btn btn-danger btn-lg btn-block")[0].click();
+
+				// if alert is called -> press OK
+
+				// check url for result status
+				// url.endsWith("success")
+
+				result.push(code);
+				continue;
+			}
 
 			setCodes(result);
 		})();
@@ -95,9 +140,8 @@ export function Details({route, navigation}) {
 		<View style={DetailsStyles.container}>
 			<WebView
 				ref={webViewRef}
-				originWhitelist={['*']}
+				originWhitelist={["*"]}
 				style={DetailsStyles.webView}
-				source={{ uri: 'about:blank' }}
 				scalesPageToFit={false}
 				mediaPlaybackRequiresUserAction={false}
 				allowsInlineMediaPlayback={true}
@@ -108,9 +152,10 @@ export function Details({route, navigation}) {
 				setSupportMultipleWindows={false}
 				onShouldStartLoadWithRequest={onShouldStartLoadWithRequest}
 				javaScriptCanOpenWindowsAutomatically={false}
+				androidHardwareAccelerationDisabled={true}
 				injectedJavaScriptBeforeContentLoaded={initialInjectedJavaScript}
 				onError={onWebViewError}
-                onHttpError={onWebViewHTTPError}
+				onHttpError={onWebViewHTTPError}
 				onMessage={onMessage}
 				onNavigationStateChange={onNavigationStateChange}
 				mixedContentMode={"always"}
@@ -123,7 +168,7 @@ export function Details({route, navigation}) {
 				style={DetailsStyles.backgroundImage}
 				resizeMode="cover"
 			/>
-			{codes.map(function(code, index) {
+			{codes.map((code, index) => {
 				return (
 					<View 
 						key={index} 
@@ -141,8 +186,8 @@ export function Details({route, navigation}) {
 					>
 						<MaterialIcons name={code.icon} size={code.size - 40} color={code.success ? "black" : "white"} />
 					</View>
-				)
-            })}
+				);
+			})}
 
 			<BlurView
 				intensity={100}

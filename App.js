@@ -38,25 +38,25 @@ export default function App() {
 const TabNavigatorOptions = {
 	title: "Scanner",
 	headerShown: false
-}
+};
 
 function TabNavigator() {
 	const scheme = useColorScheme();
 	const theme = scheme === "dark" ? DarkTheme : DefaultTheme;
 
 	return (
-			<Tab.Navigator
-				screenOptions={{
-					tabBarActiveTintColor: theme.colors.text,
-					tabBarInactiveTintColor: "#808080",
-					tabBarStyle: { position: "absolute" },
-					tabBarBackground: () => (
-						<BlurView tint={scheme} intensity={100} style={StyleSheet.absoluteFill} />
-					)
-				}}>
-				<Tab.Screen name="Scanner" component={Scanner} options={ScannerOptions} />
-				<Tab.Screen name="Settings" component={Settings} options={SettingsOptions} />
-			</Tab.Navigator>
+		<Tab.Navigator
+			screenOptions={{
+				tabBarActiveTintColor: theme.colors.text,
+				tabBarInactiveTintColor: "#808080",
+				tabBarStyle: { position: "absolute" },
+				tabBarBackground: () => (
+					<BlurView tint={scheme} intensity={100} style={StyleSheet.absoluteFill} />
+				)
+			}}>
+			<Tab.Screen name="Scanner" component={Scanner} options={ScannerOptions} />
+			<Tab.Screen name="Settings" component={Settings} options={SettingsOptions} />
+		</Tab.Navigator>
 		
 	);
 }

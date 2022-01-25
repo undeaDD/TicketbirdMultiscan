@@ -42,9 +42,11 @@ export function Scanner({navigation}) {
 	};
 
 	const takePhoto = async () => {
-		Haptics.impactAsync("heavy");
-		var photo = await cameraRef.current.takePictureAsync();
-    	navigation.navigate("Details", {photo: photo})
+		try { 
+			Haptics.impactAsync("heavy");
+			var photo = await cameraRef.current.takePictureAsync();
+			navigation.navigate("Details", {photo: photo});
+		} catch(e) { console.error(e) };
 	};
 
 	return (
