@@ -43,7 +43,7 @@ export function Scanner({navigation}) {
 
 	const takePhoto = async () => {
 		Haptics.impactAsync("heavy");
-		const photo = await cameraRef.current.takePictureAsync();
+		var photo = await cameraRef.current.takePictureAsync();
     	navigation.navigate("Details", {photo: photo})
 	};
 
@@ -77,7 +77,7 @@ export function Scanner({navigation}) {
 					]}
 				/>
 			</TouchableOpacity>
-			<TouchableOpacity 
+			<TouchableOpacity
 				activeOpacity={0.5}
 				onPress={takePhoto}
 				style={[

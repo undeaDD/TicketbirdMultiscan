@@ -1,8 +1,9 @@
-import { View, Image, StyleSheet, ActivityIndicator, Dimensions, useColorScheme } from "react-native";
+import { View, Image, StyleSheet, ActivityIndicator, Dimensions, useColorScheme, Alert } from "react-native";
 import { useHeaderHeight } from '@react-navigation/elements';
 import { BarCodeScanner } from "expo-barcode-scanner";
 import React, { useState, useEffect } from "react";
 import { DetailsStyles } from "./DetailsStyles";
+import * as FileSystem from 'expo-file-system';
 import { BlurView } from "expo-blur";
 
 export const DetailsOptions = {
@@ -17,19 +18,25 @@ const getImageSize = async uri => new Promise(resolve => {
 })
 
 const applyingScale = (code, scale) => {
-	
 	const obj = {};
 	obj.data = code.data;
-	obj.x = parseFloat(code.bounds.origin.x) * scale.width;
-	obj.y = parseFloat(code.bounds.origin.y) * scale.height;
-	obj.width = 5  // code.bounds.size.width * scale.width;
-	obj.height = 5 // code.bounds.size.height * scale.height;
-
-	console.log(obj)
+	obj.x = parseFloat(code.bounds.origin.x) * scale;
+	obj.y = parseFloat(code.bounds.origin.y) * scale;
+	obj.size = code.bounds.size.width * scale;
 	return obj;
 }
 
-export function Details({route}) {
+const AsyncAlert = async () => new Promise((resolve) => {
+	Alert.alert("Falsche Orientierung", "Die App unterstüzt nur Fotos im 'hochkant' Format.", [{
+		style: "cancel",
+		text: "Zurück",
+		onPress: () => {
+			resolve();
+		},
+	}], { cancelable: false });
+});
+
+export function Details({route, navigation}) {
 	const [processing, setProcessing] = useState(true);
 	const [codes, setCodes] = useState([]);
 	const headerHeight = useHeaderHeight();
@@ -39,37 +46,55 @@ export function Details({route}) {
 	useEffect(() => {
 		(async () => {
 			const {width, height} = await getImageSize(photo.uri);
-			const dim = Dimensions.get('window');
-			const scale = {width: parseFloat(dim.width) / parseFloat(width), height: parseFloat(dim.height) / parseFloat(height)};
+			const scale = Dimensions.get('window').width / width;
+
+			if (width > height) {
+				await AsyncAlert();
+				navigation.goBack();
+				FileSystem.deleteAsync(photo.uri);
+				return;
+			}
 
 			var result = await BarCodeScanner.scanFromURLAsync(photo.uri, [BarCodeScanner.Constants.BarCodeType.qr]);
 			result = result.map( code => applyingScale(code, scale));
 
 			setCodes(result);
 			setProcessing(false);
-			// remove photo from cache: FileSystem.deleteAsync(photo.uri);
 		})();
 	}, []);
 
 	return (
-		<View style={StyleSheet.absoluteFill}>
+		<View style={DetailsStyles.container}>
 			<Image 
 				blurRadius={processing ? 100 : 0}
 				source={{uri: photo.uri}} 
-				style={StyleSheet.absoluteFill}
+				style={DetailsStyles.backgroundImage}
 				resizeMode="cover"
 			/>
 			<BlurView
 				intensity={100}
 				tint={scheme === "dark" ? "dark" : "light"}
-				style={{width: "100%", position: "absolute", left: 0, top: 0, height: headerHeight}}
+				style={[DetailsStyles.headerBackground, {height: headerHeight}]}
 			/>
 			{ processing &&
 				<ActivityIndicator size="large" style={DetailsStyles.spinner}/>
 			}
-
 			{codes.map(function(code, index) {
-				return (<View key={index} style={{backgroundColor: "green", position: "absolute", left: index * 20, top: code.y, width: 20, height: 20}}/>)
+				return (
+					<View 
+						key={index} 
+						style={[ 
+							DetailsStyles.overlays, 
+							{
+								left: code.y + 20,
+								top: code.x + 20,
+								width: code.size - 40,
+								height: code.size - 40,
+								borderRadius: (code.size - 40) / 2
+							}
+						]}
+					/>
+				)
             })}
 		</View>
 	);
