@@ -23,8 +23,9 @@ export const DetailsStyles = StyleSheet.create({
         justifyContent: 'center'
 	},
     overlays: {
-        backgroundColor: "#00ff0055",
-        position: "absolute"
+        position: "absolute",
+        justifyContent:"center",
+        alignItems:"center"
     }
 });
      
