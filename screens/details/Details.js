@@ -1,4 +1,4 @@
-import { View, Image, ActivityIndicator, Dimensions, useColorScheme, Alert } from "react-native";
+import { View, Image, ActivityIndicator, Dimensions, useColorScheme, Alert, StyleSheet } from "react-native";
 import { useHeaderHeight } from "@react-navigation/elements";
 import { BarCodeScanner } from "expo-barcode-scanner";
 import { MaterialIcons } from "@expo/vector-icons";
@@ -38,25 +38,21 @@ const AsyncAlert = async () => new Promise((resolve) => {
 	}], { cancelable: false });
 });
 
-const wait = (ms) => 
-	new Promise(resolve => 
-		setTimeout(() => resolve(true), ms)
-	);
-
 const onNavigationStateChange = (newNavigationState) => {
 
 };
 
 const onMessage = (messageEvent) => {
-
+	console.log(messageEvent)
+	waiting = true;
 };
 
-const onWebViewError = () => {
-	
+const onWebViewError = (error) => {
+	console.log(error)
 };
 
-const onWebViewHTTPError = () => {
-
+const onWebViewHTTPError = (error) => {
+	console.log(error)
 };
 
 const onShouldStartLoadWithRequest = () => {
@@ -64,17 +60,19 @@ const onShouldStartLoadWithRequest = () => {
 };
 
 const initialInjectedJavaScript = `
-
+window.postMessage("test");
 true;
 `;
 
 export function Details({route, navigation}) {
+	const [url, setUrl] = useState([]);
 	const [codes, setCodes] = useState([]);
-	const [processing, setProcessing] = useState(false);
 	const headerHeight = useHeaderHeight();
 	const webViewRef = useRef(null);
 	const scheme = useColorScheme();
 	const { photo } = route.params;
+
+	var waiting = false;
 
 	useEffect(() => {
 		(async () => {
@@ -103,6 +101,8 @@ export function Details({route, navigation}) {
 				
 				code.success = true;
 				code.icon = "check";
+
+				setUrl(code.data);
 
 				// await new Promise(r => setTimeout(r, 2000));
 
@@ -138,7 +138,13 @@ export function Details({route, navigation}) {
 
 	return (
 		<View style={DetailsStyles.container}>
+			<Image 
+				source={{uri: photo.uri}} 
+				style={DetailsStyles.backgroundImage}
+				resizeMode="cover"
+			/>
 			<WebView
+				source={{uri: url}}
 				ref={webViewRef}
 				originWhitelist={["*"]}
 				style={DetailsStyles.webView}
@@ -162,11 +168,7 @@ export function Details({route, navigation}) {
 				javaScriptEnabled={true}
 				cacheEnabled={false}
 				incognito={false}
-			/>
-			<Image 
-				source={{uri: photo.uri}} 
-				style={DetailsStyles.backgroundImage}
-				resizeMode="cover"
+				style={StyleSheet.absoluteFillObject}
 			/>
 			{codes.map((code, index) => {
 				return (
