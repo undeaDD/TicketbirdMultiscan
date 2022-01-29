@@ -40,39 +40,49 @@ const AsyncAlert = async (title, message) => new Promise((resolve) => {
 
 const onMessage = (event) => {
 	console.log(event.nativeEvent.data)
-				
-	// check if login page:
-	//  if (document.getElementById("passwordform-password")) { /*...*/ }
 
-	// set pw: 
-	// document.getElementById("passwordform-password").value  = "test123123";
-		
-	// click submit login button
-	// document.querySelectorAll('button[type=submit]')[0].click();
-
-	// click NEGATIVE button
-	// document.getElementsByClassName("btn btn-success btn-lg btn-block")[0].click();
-
-	// [optional] click POSITIVE button
-	// document.getElementsByClassName("btn btn-danger btn-lg btn-block")[0].click();
-
-	// if alert is called -> press OK
-
-	// check url for result status
-	// url.endsWith("success")
-
-	// to finish process and show results:
-	// setCodes(result);
-};
-
-const onShouldStartLoadWithRequest = (event) => {
-	return event.url !== "";
+	switch (event.nativeEvent.data) {
+		case "next":
+			if (currentIndex == valids.length) { // TODO: check if this is okay
+				// TODO: merge valids array with result before setCode
+				setCodes(result); 				 
+			} else {
+				currentIndex += 1;
+				setUrl(valids[currentIndex].data);
+			}
+		default:
+			console.log("unknown onMessage Event: ", event.nativeEvent.data);
+	}
 };
 
 const initialInjectedJavaScript = `
 	function injectCode() { 
 		injectCode = function() {}; /* run once */
 		window.ReactNativeWebView.postMessage('test');  /* callBack to app (with any string) */
+
+		/*
+			// TODO: do logic here ...
+
+			// check if login page:
+			//  if (document.getElementById("passwordform-password")) {  }
+		
+			// set pw: 
+			// document.getElementById("passwordform-password").value  = "test123123";
+				
+			// click submit login button
+			// document.querySelectorAll('button[type=submit]')[0].click();
+		
+			// click NEGATIVE button
+			// document.getElementsByClassName("btn btn-success btn-lg btn-block")[0].click();
+		
+			// [optional] click POSITIVE button
+			// document.getElementsByClassName("btn btn-danger btn-lg btn-block")[0].click();
+		
+			// if alert is called -> press OK
+		
+			// check url for result status
+			// url.endsWith("success")
+		*/
 	}
 	
 	document.addEventListener('DOMContentLoaded', function () {
@@ -92,6 +102,7 @@ export function Details({route, navigation}) {
 
 	var result = [];
 	var valids = [];
+	var currentIndex = 0;
 
 	useEffect(() => {
 		(async () => {
@@ -128,7 +139,7 @@ export function Details({route, navigation}) {
 			}
 
 			if (result.length > 0) {
-				setUrl(valids[0].data);
+				setUrl(valids[currentIndex].data);
 			} else {
 				await AsyncAlert("Erneut Scannen", "Die App konnte keine (gültigen) QRCodes in dem Scan finden.");
 				navigation.goBack();
@@ -156,7 +167,6 @@ export function Details({route, navigation}) {
 				contentMode={"mobile"}
 				mixedContentMode={"compability"}
 				setSupportMultipleWindows={false}
-				onShouldStartLoadWithRequest={onShouldStartLoadWithRequest}
 				javaScriptCanOpenWindowsAutomatically={true}
 				injectedJavaScriptBeforeContentLoaded={initialInjectedJavaScript}
 				javaScriptEnabledAndroid={true}
