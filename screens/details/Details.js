@@ -8,6 +8,12 @@ import { WebView } from "react-native-webview";
 import * as FileSystem from "expo-file-system";
 import { BlurView } from "expo-blur";
 
+var setCodesRef;
+var setUrlRef;
+var currentIndex = 0;
+var result = [];
+var valids = [];
+
 export const DetailsOptions = {
 	title: "Ergebnisse",
 	headerShown: true
@@ -19,8 +25,9 @@ const getImageSize = async uri => new Promise(resolve => {
 	});
 });
 
-const applyingScale = (code, scale) => {
+const applyingScale = (code, scale, id) => {
 	const obj = {};
+	obj.id = id;
 	obj.data = code.data;
 	obj.x = parseFloat(code.bounds.origin.x) * scale;
 	obj.y = parseFloat(code.bounds.origin.y) * scale;
@@ -39,16 +46,27 @@ const AsyncAlert = async (title, message) => new Promise((resolve) => {
 });
 
 const onMessage = (event) => {
-	console.log(event.nativeEvent.data)
-
+	console.log("Got Message: ", event.nativeEvent.data)
 	switch (event.nativeEvent.data) {
-		case "next":
-			if (currentIndex == valids.length) { // TODO: check if this is okay
-				// TODO: merge valids array with result before setCode
-				setCodes(result); 				 
+		case "success":
+			if (currentIndex == valids.length) {
+				// finished all codes
+				setCodesRef(result); 				 
 			} else {
+				result[currentIndex].success = true;
+				result[currentIndex].icon = "check";
 				currentIndex += 1;
-				setUrl(valids[currentIndex].data);
+				setUrlRef(valids[currentIndex].data);
+			}
+		case "error":
+			if (currentIndex == valids.length) {
+				// finished all codes
+				setCodesRef(result); 				 
+			} else {
+				result[currentIndex].success = false;
+				result[currentIndex].icon = "error-outline";
+				currentIndex += 1;
+				setUrlRef(valids[currentIndex].data);
 			}
 		default:
 			console.log("unknown onMessage Event: ", event.nativeEvent.data);
@@ -84,9 +102,11 @@ const initialInjectedJavaScript = `
 			// url.endsWith("success")
 
 			// send action for next code
-			// window.ReactNativeWebView.postMessage("next")
-			// ( any other string and it will just be printed in the console, for debugging purposes )
+			// window.ReactNativeWebView.postMessage("success") or ("error") or (add you own custom event string <- in the switch case of the onMessage function)
+			// ( any other string and it will just be printed in the console <- for debugging purposes ... )
 		*/
+
+		window.ReactNativeWebView.postMessage("success");
 	}
 	
 	document.addEventListener('DOMContentLoaded', function () {
@@ -104,11 +124,10 @@ export function Details({route, navigation}) {
 	const scheme = useColorScheme();
 	const { photo } = route.params;
 
-	var result = [];
-	var valids = [];
-	var currentIndex = 0;
-
 	useEffect(() => {
+		setCodesRef = setCodes;
+		setUrlRef = setUrl;
+
 		(async () => {
 			const {width, height} = await getImageSize(photo.uri);
 			const scale = Dimensions.get("window").width / width;
@@ -121,9 +140,10 @@ export function Details({route, navigation}) {
 			}
 
 			var scans = await BarCodeScanner.scanFromURLAsync(photo.uri, [BarCodeScanner.Constants.BarCodeType.qr]);
-
+			var indexId = 0;
 			for (const qrCode of scans) {
-				var code = applyingScale(qrCode, scale);
+				var code = applyingScale(qrCode, scale, indexId);
+				indexId += 1;
 				
 				if (
 					!code.data.startsWith("https://testcov-has.ticketbird.de/auswertung/") &&
@@ -135,8 +155,8 @@ export function Details({route, navigation}) {
 					continue;
 				}
 				
-				code.success = true;
-				code.icon = "check";
+				code.success = false;
+				code.icon = "not-listed-location";
 				result.push(code);
 				valids.push(code);
 				continue;
@@ -151,6 +171,14 @@ export function Details({route, navigation}) {
 				return;
 			}
 		})();
+
+		return () => {
+			setCodesRef = null;
+			setUrlRef = null;
+			currentIndex = 0;
+			result = [];
+			valids = [];
+		}
 	}, []);
 
 	return (
