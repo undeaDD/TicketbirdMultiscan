@@ -82,6 +82,10 @@ const initialInjectedJavaScript = `
 		
 			// check url for result status
 			// url.endsWith("success")
+
+			// send action for next code
+			// window.ReactNativeWebView.postMessage("next")
+			// ( any other string and it will just be printed in the console, for debugging purposes )
 		*/
 	}
 	
