@@ -92,7 +92,7 @@ export function Details({route, navigation}) {
 			for (const qrCode of scans) {
 				var code = applyingScale(qrCode, scale)
 
-				if (!code.data.startsWith("https://")) {
+				if (!code.data.startsWith("https://testcov-has.ticketbird.de/auswertung/")) {
 					code.success = false;
 					code.icon = "link-off";
 					result.push(code);
