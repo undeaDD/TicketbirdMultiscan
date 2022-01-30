@@ -39,6 +39,7 @@ export function Scanner({navigation}) {
 	const toggleFlash = async () => {
 		Haptics.impactAsync("light");
 		setFlashMode(!flashMode);
+		console.log("flash toggled");
 	};
 
 	const takePhoto = async () => {
