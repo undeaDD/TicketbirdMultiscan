@@ -1,6 +1,8 @@
-import { FlatList, View, StyleSheet, Text } from "react-native";
+import { FlatList, View, Text, TextInput, StyleSheet } from "react-native";
 import { MaterialIcons } from "@expo/vector-icons";
 import React from "react";
+
+var password = " ";
 
 export const SettingsOptions = {
 	title: "Einstellungen",
@@ -10,41 +12,46 @@ export const SettingsOptions = {
 	),
 };
 
+const updatePassword = (pwInput) => {
+	password = pwInput;
+	console.log(password);
+}
+
 const Item = ({item}) => {
-	switch (item.id) {
+	switch (item.id){
 		case "0":
 			return (
-				<Text style={{width: "80%", height: 60, backgroundColor: "red", color: "white"}}>
-					123
-					<Text style={{width: "80%", height: 60, backgroundColor: "red", color: "blue"}}>
-						123
+				<View>
+					<Text style={{width: "100%", height: "60", color: "white"}}>
+						Password:
 					</Text>
-				</Text>
+					<TextInput style={{width: "100%", height: "60", color: "white"}} defaultValue={item.default} secureTextEntry={true} onChangeText={updatePassword}/>
+				</View>
 			);
 		case "1":
 			return (
 				<View></View>
 			);
-		default: 
+		default:
 			return null;
 	}
 };
 
 export function Settings() {
-	const renderItem = ({ item }) => <Item item={item}/>;
+	const renderItem = ({item}) => <Item item={item}/>;
 	return <FlatList data={data} renderItem={renderItem} keyExtractor={item => item.id} />;
 }
 
 const data = [
 	{
 		id: "0",
-		title: "Passwort",
-		default: "-"
+		title: "Password",
+		default: "",
 	},
 	{
 		id: "1",
-	},{
-		id: "2"
+		title: "Scan Type",
+		default: "0",
 	}
 ];
 
