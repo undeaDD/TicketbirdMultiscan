@@ -1,4 +1,4 @@
-import { View, Image, ActivityIndicator, Dimensions, useColorScheme, Alert, StyleSheet } from "react-native";
+import { View, Image, ActivityIndicator, Dimensions, useColorScheme, Alert } from "react-native";
 import { useHeaderHeight } from "@react-navigation/elements";
 import { BarCodeScanner } from "expo-barcode-scanner";
 import { MaterialIcons } from "@expo/vector-icons";
@@ -8,8 +8,8 @@ import { WebView } from "react-native-webview";
 import * as FileSystem from "expo-file-system";
 import { BlurView } from "expo-blur";
 
-var setCodesRef;
 var setUrlRef;
+var setCodesRef;
 var currentIndex = 0;
 var result = [];
 var valids = [];
@@ -50,7 +50,6 @@ const onMessage = (event) => {
 	switch (event.nativeEvent.data) {
 		case "success":
 			if (currentIndex == valids.length) {
-				// finished all codes
 				setCodesRef(result); 				 
 			} else {
 				result[currentIndex].success = true;
@@ -60,7 +59,6 @@ const onMessage = (event) => {
 			}
 		case "error":
 			if (currentIndex == valids.length) {
-				// finished all codes
 				setCodesRef(result); 				 
 			} else {
 				result[currentIndex].success = false;
@@ -72,6 +70,8 @@ const onMessage = (event) => {
 			console.log("unknown onMessage Event: ", event.nativeEvent.data);
 	}
 };
+
+
 
 const initialInjectedJavaScript = `
 	function injectCode() { 
