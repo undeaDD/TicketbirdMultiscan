@@ -1,18 +1,31 @@
 export class ButtonType {
-    static NEGATIVE = "btn-success";
-    static POSITIVE = "btn-danger";
-    static INVALID  = "btn-secondary";
+    static NEGATIVE = 0;
+    static POSITIVE = 1;
+    static INVALID  = 2;
 
-    getColor = (buttonType) => {
+    static getValue = (buttonType) => {
         switch (buttonType) {
-            case NEGATIVE:
-                return "green";
-            case POSITIVE:
-                return "red";
-            case INVALID:
-                return "gray";
+            case 0:
+                return "btn-success";
+            case 1:
+                return "btn-danger";
+            case 2:
+                return "btn-secondary";
             default: 
-                return "black";
+                return "-";
+        }
+    }
+
+    static getColor = (buttonType) => {
+        switch (buttonType) {
+            case 0:
+                return "#00ff00bb";
+            case 1:
+                return "#ff0000bb";
+            case 2:
+                return "#222222bb";
+            default: 
+                return "#000000bb";
         }
     }
 }

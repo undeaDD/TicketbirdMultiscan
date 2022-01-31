@@ -2,12 +2,13 @@ import { View, Platform, useColorScheme, TouchableOpacity, useWindowDimensions, 
 import { MaterialIcons, MaterialCommunityIcons } from "@expo/vector-icons";
 import { useBottomTabBarHeight } from "@react-navigation/bottom-tabs";
 import React, { useState, useEffect, useRef } from "react";
+import { ButtonType } from "../details/injectedJavaScript";
+import useAsyncStorage from "../helper/useAsyncStorage";
 import { BarCodeScanner } from "expo-barcode-scanner";
 import { ScannerStyles as Styles } from "./Styles";
 import * as Haptics from "expo-haptics";
 import { BlurView } from "expo-blur";
 import { Camera } from "expo-camera";
-import { Settings } from "../settings/Settings";
 
 export const ScannerOptions = {
 	title: "Scanner",
@@ -18,13 +19,12 @@ export const ScannerOptions = {
 	),
 };
 
-const [scanType, setscanType] = useState(false);
-
 export function Scanner({navigation}) {
 	const scheme = useColorScheme();
 	const width = useWindowDimensions().width;
 	const tabBarHeight = useBottomTabBarHeight();
 	const [flashMode, setFlashMode] = useState(false);
+	const [scanType, _setScanType] = useAsyncStorage("@scanType", 0);
 	const cameraRef = useRef(null);
 
 	useEffect(() => {
@@ -86,7 +86,7 @@ export function Scanner({navigation}) {
 				activeOpacity={0.5}
 				onPress={takePhoto}
 				style={[
-					{bottom: tabBarHeight + 10, left: width / 2 - 35}, {backgroundColor: scanType ? "#00000050" : "#00ff0080"}, {borderColor: "white"},
+					{bottom: tabBarHeight + 10, left: width / 2 - 35}, { backgroundColor: ButtonType.getColor(scanType) }, {borderColor: "white"},
 					Styles.takePictureButton
 				]}
 			/>

@@ -1,8 +1,9 @@
-import { FlatList, View, Text, TextInput, Switch, StyleSheet } from "react-native";
+import SegmentedControl from '@react-native-segmented-control/segmented-control';
+import { FlatList, View, Text, TextInput } from "react-native";
+import { SettingsStyles as Styles, SettingsData } from "./Styles";
+import useAsyncStorage from "../helper/useAsyncStorage";
 import { MaterialIcons } from "@expo/vector-icons";
-import React, { useState, useEffect } from "react";
-import { AsyncStorageHandler } from "./AsyncStorageHandler";
-var password = " ";
+import React from "react";
 
 export const SettingsOptions = {
 	title: "Einstellungen",
@@ -12,82 +13,51 @@ export const SettingsOptions = {
 	),
 };
 
-const updatePassword = (pwInput) => {
-	password = pwInput;
-}
-
-const Item = ({item}) => {
-	const [isEnabled, setIsEnabled] = useState(false);
-	useEffect(() => {
-		AsyncStorageHandler.loadValue("@ccanType").then(setIsEnabled);
-	   }, []);
-  	const toggleSwitch = (previousState) => {
-		  setIsEnabled(previousState => !previousState);
-		  AsyncStorageHandler.saveValue("@scanType",!isEnabled);
-	};
-	switch (item.id){
-		case "0":
-			return (
-				<View>
-					<Text style={{width: "100%", height: 40, color: "white"}}></Text>
-					<Text style={{width: "100%", height: 20, color: "white"}}>
-						{item.title}:
-					</Text>
-					<TextInput style={{width: "100%", height: 30, color: "white", borderColor: "grey", borderWidth: 1}} defaultValue={item.default} secureTextEntry={true} onChangeText={updatePassword}/>
-					<View style={{width: "80%", height: 40, borderBottomColor: "grey", borderBottomWidth: 1, alignSelf: "center"}}></View>
-				</View>
-			);
-		case "1":
-			return (
-				<View>
-					<Text style={{width: "100%", height: 40, color: "white"}}></Text>
-					<Text style={{width: "100%", height: 20, color: "white"}}>
-						{item.title}:
-					</Text>
-					<View style={{flex:1 , flexDirection: "row", width: "100%", height: 30, alignItems: "center"}}>
-						<Text style={{color: "white"}}>all negative</Text>
-						<Switch trackColor={{false: "grey", true: "grey"}} onValueChange={toggleSwitch} value={isEnabled}/>
-						<Text style={{color: "white"}}>per Code</Text>
-					</View>
-				</View>
-			);
-		default:
-			return null;
-	}
-};
-
 export function Settings() {
-	const renderItem = ({item}) => <Item item={item}/>;
-	return <FlatList data={data} renderItem={renderItem} keyExtractor={item => item.id} />;
+	const [scanType, setScanType] = useAsyncStorage("@scanType", 0);
+	const [password, setPassword] = useAsyncStorage("@password", "");
+
+	const updateScanType = (newValue) => {
+		setScanType(newValue);
+  	};
+
+  	const updatePassword = (input) => {
+		setPassword(input);
+  	}
+
+	const renderItem = ({item}) => {
+		switch (item.id) {
+			case "0":
+				return (
+					<View key={item.id} style={Styles.itemContainer}>
+						<Text  style={Styles.itemTitle}>
+							{item.title}
+						</Text>
+						<TextInput  style={Styles.itemInput} value={password} secureTextEntry={true} onChangeText={updatePassword}/>
+					</View>
+				);
+			case "1":
+				return (
+					<View key={item.id} style={Styles.itemContainer}>
+						<Text style={Styles.itemTitle}>
+							{item.title}
+						</Text>
+						<SegmentedControl
+							style={Styles.itemSegmentedControl}
+							values={['Negativ', 'Positiv']}
+							selectedIndex={scanType}
+							onChange={(event) => {
+								updateScanType(event.nativeEvent.selectedSegmentIndex);
+							}}
+						/>
+					</View>
+				);
+			default:
+				return null;
+		}
+	};
+
+	return (
+		<FlatList data={SettingsData} renderItem={renderItem} keyExtractor={item => item.id} styles={Styles.container} />
+	);
 }
-
-const data = [
-	{
-		id: "0",
-		title: "Password",
-		default: "",
-	},
-	{
-		id: "1",
-		title: "Scan Type",
-		default: "0",
-	}
-];
-
-const styles = StyleSheet.create({
-	container: {
-		flex: 1,
-	},
-	item: {
-		padding: 20,
-		marginVertical: 8,
-		marginHorizontal: 16,
-	},
-	title: {
-		fontSize: 32,
-	},
-	title: {
-		width: "100%",
-		height: 20,
-	}
-});

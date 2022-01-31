@@ -25,6 +25,7 @@ export default function App() {
 			<Stack.Navigator
 				screenOptions={{
 					headerTransparent: true,
+					unmountOnBlur: true,
 				}}
 			>
 				<Stack.Screen name="Tab" component={TabNavigator} options={TabNavigatorOptions}/>
@@ -52,8 +53,10 @@ function TabNavigator() {
 				tabBarStyle: { position: "absolute" },
 				tabBarBackground: () => (
 					<BlurView tint={scheme} intensity={100} style={StyleSheet.absoluteFill} />
-				)
-			}}>
+				),
+				unmountOnBlur: true
+			}}
+		>
 			<Tab.Screen name="Scanner" component={Scanner} options={ScannerOptions} />
 			<Tab.Screen name="Settings" component={Settings} options={SettingsOptions} />
 		</Tab.Navigator>

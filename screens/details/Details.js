@@ -1,12 +1,14 @@
 import { View, Image, ActivityIndicator, Dimensions, useColorScheme } from "react-native";
 import { useHeaderHeight } from "@react-navigation/elements";
+import { getInjectedJavaScript } from "./injectedJavaScript";
+import React, { useState, useEffect, useRef } from "react";
 import { BarCodeScanner } from "expo-barcode-scanner";
 import { MaterialIcons } from "@expo/vector-icons";
-import React, { useState, useEffect, useRef } from "react";
 import { DetailsStyles } from "./DetailsStyles";
 import { WebView } from "react-native-webview";
 import * as FileSystem from "expo-file-system";
 import { BlurView } from "expo-blur";
+
 
 export const DetailsOptions = {
 	title: "Ergebnisse",
@@ -14,6 +16,7 @@ export const DetailsOptions = {
 };
 
 export function Details({route, navigation}) {
+	const injectedJavaScript = getInjectedJavaScript("", "")
 	const [url, setUrl] = useState(undefined);
 	const [codes, setCodes] = useState([]);
 	const headerHeight = useHeaderHeight();
@@ -116,7 +119,7 @@ export function Details({route, navigation}) {
 				mixedContentMode={"compability"}
 				setSupportMultipleWindows={false}
 				javaScriptCanOpenWindowsAutomatically={true}
-				injectedJavaScriptBeforeContentLoaded={initialInjectedJavaScript}
+				injectedJavaScriptBeforeContentLoaded={injectedJavaScript}
 				javaScriptEnabledAndroid={true}
 				javaScriptEnabled={true}
 				cacheEnabled={false}
