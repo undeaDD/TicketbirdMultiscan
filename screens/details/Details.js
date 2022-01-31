@@ -107,12 +107,14 @@ const initialInjectedJavaScript = `
 		/* check for success page */
 		if (window.location.href.endsWith("success")) {
 			window.ReactNativeWebView.postMessage("success");
+			return;
 		}
 
 		/* check for error page */
 		/* TODO: check how we could figure this out :D */
 		if (window.location.href.endsWith("failed")) {
 			window.ReactNativeWebView.postMessage("error");
+			return;
 		}
 	}
 	
@@ -120,7 +122,7 @@ const initialInjectedJavaScript = `
 		injectCode(); /* run code on finished pageLoad */
 	});
 
-	true; /* return boolean always needed at the end of injected js */
+	true; /* return boolean; always needed at the end of injected js */
 `;
 
 export function Details({route, navigation}) {
