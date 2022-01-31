@@ -21,9 +21,9 @@ export class ButtonType {
             case 0:
                 return "#00ff00bb";
             case 1:
-                return "#ff0000bb";
-            case 2:
                 return "#222222bb";
+            case 2:
+                return "#ff0000bb";
             default: 
                 return "#000000bb";
         }
