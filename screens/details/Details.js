@@ -1,4 +1,4 @@
-import { View, Image, ActivityIndicator, Dimensions, useColorScheme, Alert } from "react-native";
+import { View, Image, ActivityIndicator, Dimensions, useColorScheme } from "react-native";
 import { useHeaderHeight } from "@react-navigation/elements";
 import { BarCodeScanner } from "expo-barcode-scanner";
 import { MaterialIcons } from "@expo/vector-icons";
@@ -8,122 +8,10 @@ import { WebView } from "react-native-webview";
 import * as FileSystem from "expo-file-system";
 import { BlurView } from "expo-blur";
 
-var setUrlRef;
-var setCodesRef;
-var currentIndex = 0;
-var result = [];
-var valids = [];
-
 export const DetailsOptions = {
 	title: "Ergebnisse",
 	headerShown: true
 };
-
-const getImageSize = async uri => new Promise(resolve => {
-	Image.getSize(uri, (width, height) => {
-		resolve({width, height});
-	});
-});
-
-const applyingScale = (code, scale, id) => {
-	const obj = {};
-	obj.id = id;
-	obj.data = code.data;
-	obj.x = parseFloat(code.bounds.origin.x) * scale;
-	obj.y = parseFloat(code.bounds.origin.y) * scale;
-	obj.size = code.bounds.size.width * scale;
-	obj.success = false;
-	obj.icon = "cancel";
-	return obj;
-};
-
-const AsyncAlert = async (title, message) => new Promise((resolve) => {
-	Alert.alert(title, message, [{
-		style: "cancel",
-		text: "Zurück",
-		onPress: () => { resolve(); }
-	}], { cancelable: false });
-});
-
-const onMessage = (event) => {
-	console.log("Got Message: ", event.nativeEvent.data)
-	switch (event.nativeEvent.data) {
-		case "success":
-			if (currentIndex == valids.length) {
-				setCodesRef(result); 				 
-			} else {
-				result[currentIndex].success = true;
-				result[currentIndex].icon = "check";
-				currentIndex += 1;
-				setUrlRef(valids[currentIndex].data);
-			}
-		case "error":
-			if (currentIndex == valids.length) {
-				setCodesRef(result); 				 
-			} else {
-				result[currentIndex].success = false;
-				result[currentIndex].icon = "error-outline";
-				currentIndex += 1;
-				setUrlRef(valids[currentIndex].data);
-			}
-		default:
-			console.log("unknown onMessage Event: ", event.nativeEvent.data);
-	}
-};
-
-
-const password = "test";
-const currentButton = ButtonType.NEGATIVE;
-
-class ButtonType {
-    static NEGATIVE = "btn-success";
-    static POSITIVE = "btn-danger";
-    static INVALID  = "btn-secondary";
-}
-
-const initialInjectedJavaScript = `
-	/* run once */
-	window.alert = function (msg) { window.ReactNativeWebView.postMessage("disabled popups by app"); return; };
-	window.confirm = function (msg) { window.ReactNativeWebView.postMessage("disabled popups by app"); return true; };
-	window.prompt = function (msg, value) { window.ReactNativeWebView.postMessage("disabled popups by app"); return ""; };
-
-	function injectCode() { 
-		/* run once */
-		injectCode = function() {};
-
-		/* check for login page */
-		if (document.getElementById('passwordform-password')) {
-			document.getElementById('passwordform-password').value  = '${password}';
-			document.querySelectorAll('button[type=submit]')[0].click();
-			return;
-		}
-
-		/* check for button page */
-		if (document.getElementsByClassName("btn btn-lg btn-block").length === 3) {
-			document.getElementsByClassName("btn ${currentButton} btn-lg btn-block")[0].click();
-			return;
-		}
-
-		/* check for success page */
-		if (window.location.href.endsWith("success")) {
-			window.ReactNativeWebView.postMessage("success");
-			return;
-		}
-
-		/* check for error page */
-		/* TODO: check how we could figure this out :D */
-		if (window.location.href.endsWith("failed")) {
-			window.ReactNativeWebView.postMessage("error");
-			return;
-		}
-	}
-	
-	document.addEventListener('DOMContentLoaded', function () {
-		injectCode(); /* run code on finished pageLoad */
-	});
-
-	true; /* return boolean; always needed at the end of injected js */
-`;
 
 export function Details({route, navigation}) {
 	const [url, setUrl] = useState(undefined);
@@ -133,10 +21,37 @@ export function Details({route, navigation}) {
 	const scheme = useColorScheme();
 	const { photo } = route.params;
 
+	var currentIndex = 0;
+	var result = [];
+	var valids = [];
+		
+	const onMessage = (event) => {
+		console.log("Got Message: ", event.nativeEvent.data)
+		switch (event.nativeEvent.data) {
+			case "success":
+				/*if (currentIndex == valids.length) {
+					setCodes(result); 				 
+				} else {
+					result[currentIndex].success = true;
+					result[currentIndex].icon = "check";
+					currentIndex += 1;
+					setUrl(valids[currentIndex].data);
+				}*/
+			case "error":
+				/*if (currentIndex == valids.length) {
+					setCodes(result); 				 
+				} else {
+					result[currentIndex].success = false;
+					result[currentIndex].icon = "error-outline";
+					currentIndex += 1;
+					setUrl(valids[currentIndex].data);
+				}*/
+			default:
+				console.log("unknown onMessage Event: ", event.nativeEvent.data);
+		}
+	};
+	
 	useEffect(() => {
-		setCodesRef = setCodes;
-		setUrlRef = setUrl;
-
 		(async () => {
 			const {width, height} = await getImageSize(photo.uri);
 			const scale = Dimensions.get("window").width / width;
@@ -180,14 +95,6 @@ export function Details({route, navigation}) {
 				return;
 			}
 		})();
-
-		return () => {
-			setCodesRef = null;
-			setUrlRef = null;
-			currentIndex = 0;
-			result = [];
-			valids = [];
-		}
 	}, []);
 
 	return (
