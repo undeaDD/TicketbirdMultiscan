@@ -25,7 +25,7 @@ const Item = ({item}) => {
 					<Text style={{width: "100%", height: 60, color: "white"}}>
 						Password:
 					</Text>
-					<TextInput style={{width: "100%", height: 60, color: "white"}} defaultValue={item.default} secureTextEntry={true} onChangeText={updatePassword}/>
+					<TextInput style={{width: "100%", height: 60, color: "white", borderColor: "grey"}} defaultValue={item.default} secureTextEntry={true} onChangeText={updatePassword}/>
 				</View>
 			);
 		case "1":
