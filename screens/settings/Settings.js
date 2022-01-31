@@ -39,7 +39,6 @@ const Item = ({item}) => {
 
 export function Settings() {
 	const renderItem = ({item}) => <Item item={item}/>;
-
 	return <FlatList data={data} renderItem={renderItem} keyExtractor={item => item.id} />;
 }
 
@@ -53,7 +52,7 @@ const data = [
 		id: "1",
 		title: "Scan Type",
 		default: "0",
-	},
+	}
 ];
 
 const styles = StyleSheet.create({
@@ -68,4 +67,8 @@ const styles = StyleSheet.create({
 	title: {
 		fontSize: 32,
 	},
+	title: {
+		width: "100%",
+		height: 20,
+	}
 });
