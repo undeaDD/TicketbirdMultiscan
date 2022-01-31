@@ -72,41 +72,48 @@ const onMessage = (event) => {
 };
 
 
+const password = "test";
+const currentButton = ButtonType.NEGATIVE;
+
+class ButtonType {
+    static NEGATIVE = "btn-success";
+    static POSITIVE = "btn-danger";
+    static INVALID  = "btn-secondary";
+}
 
 const initialInjectedJavaScript = `
+	/* run once */
+	window.alert = function (msg) { window.ReactNativeWebView.postMessage("disabled popups by app"); return; };
+	window.confirm = function (msg) { window.ReactNativeWebView.postMessage("disabled popups by app"); return true; };
+	window.prompt = function (msg, value) { window.ReactNativeWebView.postMessage("disabled popups by app"); return ""; };
+
 	function injectCode() { 
-		injectCode = function() {}; /* run once */
-		window.ReactNativeWebView.postMessage('test');  /* callBack to app (with any string) */
+		/* run once */
+		injectCode = function() {};
 
-		/*
-			// TODO: do logic here ...
+		/* check for login page */
+		if (document.getElementById('passwordform-password')) {
+			document.getElementById('passwordform-password').value  = '${password}';
+			document.querySelectorAll('button[type=submit]')[0].click();
+			return;
+		}
 
-			// check if login page:
-			//  if (document.getElementById("passwordform-password")) {  }
-		
-			// set pw: 
-			// document.getElementById("passwordform-password").value  = "test123123";
-				
-			// click submit login button
-			// document.querySelectorAll('button[type=submit]')[0].click();
-		
-			// click NEGATIVE button
-			// document.getElementsByClassName("btn btn-success btn-lg btn-block")[0].click();
-		
-			// [optional] click POSITIVE button
-			// document.getElementsByClassName("btn btn-danger btn-lg btn-block")[0].click();
-		
-			// if alert is called -> press OK
-		
-			// check url for result status
-			// url.endsWith("success")
+		/* check for button page */
+		if (document.getElementsByClassName("btn btn-lg btn-block").length === 3) {
+			document.getElementsByClassName("btn ${currentButton} btn-lg btn-block")[0].click();
+			return;
+		}
 
-			// send action for next code
-			// window.ReactNativeWebView.postMessage("success") or ("error") or (add you own custom event string <- in the switch case of the onMessage function)
-			// ( any other string and it will just be printed in the console <- for debugging purposes ... )
-		*/
+		/* check for success page */
+		if (window.location.href.endsWith("success")) {
+			window.ReactNativeWebView.postMessage("success");
+		}
 
-		window.ReactNativeWebView.postMessage("success");
+		/* check for error page */
+		/* TODO: check how we could figure this out :D */
+		if (window.location.href.endsWith("failed")) {
+			window.ReactNativeWebView.postMessage("error");
+		}
 	}
 	
 	document.addEventListener('DOMContentLoaded', function () {
