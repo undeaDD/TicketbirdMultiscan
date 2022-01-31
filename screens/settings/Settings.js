@@ -19,11 +19,11 @@ const updatePassword = (pwInput) => {
 const Item = ({item}) => {
 	const [isEnabled, setIsEnabled] = useState(false);
 	useEffect(() => {
-		//AsyncStorageHandler.loadValue("@ccanType").then(setIsEnabled);
+		AsyncStorageHandler.loadValue("@ccanType").then(setIsEnabled);
 	   }, []);
   	const toggleSwitch = (previousState) => {
 		  setIsEnabled(previousState => !previousState);
-		  //AsyncStorageHandler.saveValue("@scanType",!isEnabled);
+		  AsyncStorageHandler.saveValue("@scanType",!isEnabled);
 	};
 	switch (item.id){
 		case "0":

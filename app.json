@@ -1,57 +1,60 @@
 {
-	"expo": {
-		"name": "TMS",
-		"slug": "tms",
-		"description": "Ticketbird Multiscan App",
-		"privacy": "unlisted",
-		"version": "1.0.0",
-		"orientation": "portrait",
-		"userInterfaceStyle": "automatic",
-		"backgroundColor": "#000000",
-		"icon": "./assets/icon.png",
-		"developmentClient": {
-			"silentLaunch": true
-		},
-		"splash": {
-			"image": "./assets/splash.png",
-			"resizeMode": "contain",
-			"backgroundColor": "#ffffff"
-		},
-		"updates": {
-			"fallbackToCacheTimeout": 0
-		},
-		"assetBundlePatterns": ["**/*"],
-		"ios": {
-			"supportsTablet": true,
-			"requireFullScreen": true
-		},
-		"androidStatusBar": {
-			"translucent": true
-		},
-		"facebookAdvertiserIDCollectionEnabled": false,
-		"facebookAutoLogAppEventsEnabled": false,
-		"android": {
-			"adaptiveIcon": {
-				"foregroundImage": "./assets/adaptive-icon.png",
-				"backgroundColor": "#ffffff"
-			}
-		},
-		"androidNavigationBar": {
-			"visible": "immersive",
-			"backgroundColor": "#ffffff",
-			"barStyle": "dark-content"
-		},
-		"web": {
-			"favicon": "./assets/favicon.png",
-			"package": "de.atino.pnsrn",
-			"versionCode": 1
-		},
-		"hooks": {
-			"postPublish": [
-				{
-					"file": "./webhook.js"
-				}
-			]
-		}
-	}
+  "expo": {
+    "name": "TMS",
+    "slug": "tms",
+    "description": "Ticketbird Multiscan App",
+    "privacy": "unlisted",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "userInterfaceStyle": "automatic",
+    "backgroundColor": "#000000",
+    "icon": "./assets/icon.png",
+    "developmentClient": {
+      "silentLaunch": true
+    },
+    "splash": {
+      "image": "./assets/splash.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#ffffff"
+    },
+    "updates": {
+      "fallbackToCacheTimeout": 0
+    },
+    "assetBundlePatterns": [
+      "**/*"
+    ],
+    "ios": {
+      "supportsTablet": true,
+      "requireFullScreen": true,
+      "bundleIdentifier": "test.de"
+    },
+    "androidStatusBar": {
+      "translucent": true
+    },
+    "facebookAdvertiserIDCollectionEnabled": false,
+    "facebookAutoLogAppEventsEnabled": false,
+    "android": {
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/adaptive-icon.png",
+        "backgroundColor": "#ffffff"
+      }
+    },
+    "androidNavigationBar": {
+      "visible": "immersive",
+      "backgroundColor": "#ffffff",
+      "barStyle": "dark-content"
+    },
+    "web": {
+      "favicon": "./assets/favicon.png",
+      "package": "de.atino.pnsrn",
+      "versionCode": 1
+    },
+    "hooks": {
+      "postPublish": [
+        {
+          "file": "./webhook.js"
+        }
+      ]
+    }
+  }
 }
