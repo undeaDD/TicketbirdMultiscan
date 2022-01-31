@@ -28,9 +28,7 @@ export const ScannerStyles = StyleSheet.create({
 		height: 70,
 		borderWidth: 4,
 		borderRadius: 35,
-		borderColor: "#ffffff",
-		position: "absolute",
-		backgroundColor: "#000000dd"
+		position: "absolute"
 	}
 });
      
