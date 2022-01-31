@@ -1,4 +1,4 @@
-import { View, Platform, useColorScheme, TouchableOpacity, useWindowDimensions, Alert } from "react-native";
+import { View, Platform, useColorScheme, TouchableOpacity, useWindowDimensions, Alert, Text } from "react-native";
 import { MaterialIcons, MaterialCommunityIcons } from "@expo/vector-icons";
 import { useBottomTabBarHeight } from "@react-navigation/bottom-tabs";
 import React, { useState, useEffect, useRef } from "react";
@@ -7,6 +7,7 @@ import { ScannerStyles as Styles } from "./Styles";
 import * as Haptics from "expo-haptics";
 import { BlurView } from "expo-blur";
 import { Camera } from "expo-camera";
+import { Settings } from "../settings/Settings";
 
 export const ScannerOptions = {
 	title: "Scanner",
@@ -16,6 +17,8 @@ export const ScannerOptions = {
 		<MaterialIcons name="qr-code-scanner" size={size} color={color} />
 	),
 };
+
+const [scanType, setscanType] = useState(false);
 
 export function Scanner({navigation}) {
 	const scheme = useColorScheme();
@@ -39,7 +42,6 @@ export function Scanner({navigation}) {
 	const toggleFlash = async () => {
 		Haptics.impactAsync("light");
 		setFlashMode(!flashMode);
-		console.log("flash toggled");
 	};
 
 	const takePhoto = async () => {
@@ -84,7 +86,7 @@ export function Scanner({navigation}) {
 				activeOpacity={0.5}
 				onPress={takePhoto}
 				style={[
-					{bottom: tabBarHeight + 10, left: width / 2 - 35},
+					{bottom: tabBarHeight + 10, left: width / 2 - 35}, {backgroundColor: scanType ? "#00000050" : "#00ff0080"}, {borderColor: "white"},
 					Styles.takePictureButton
 				]}
 			/>
