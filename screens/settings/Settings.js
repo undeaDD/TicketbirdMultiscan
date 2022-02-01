@@ -18,7 +18,7 @@ export function Settings() {
 	const scheme = useColorScheme();
 	const [scanType, setScanType] = useAsyncStorage("@scanType", 0);
 	const [password, setPassword] = useAsyncStorage("@password", "");
-	const [telegram, setTelegram] = useAsyncStorage("@telegramUrl", "https://api.telegram.org/bot1801707990:AAFp5mXmyWychgL1shcAX1s2O0xuGbs3iOA/sendMessage?chat_id=20932747&text=%MSG%&parse_mode=markdown");
+	const [telegram, setTelegram] = useAsyncStorage("@telegramUrl", "https://api.telegram.org/bot<TOKEN>/sendMessage?chat_id=<CHATID>&text=%MSG%&parse_mode=markdown");
 
 	const updateScanType = (newValue) => {
 		setScanType(newValue);
@@ -29,7 +29,12 @@ export function Settings() {
   	}
 
 	const updateTelegram = (input) => {
-		setTelegram(input);
+		if (input === "") {
+			// reset to default value 
+			setTelegram("https://api.telegram.org/bot<TOKEN>/sendMessage?chat_id=<CHATID>&text=%MSG%&parse_mode=markdown");
+		} else {
+			setTelegram(input);
+		}
   	}
 
 	const renderItem = ({item}) => {
@@ -54,9 +59,10 @@ export function Settings() {
 								Styles.itemInput,
 								{
 									color: scheme === "dark" ? "#ffffff" : "#000000",
-									backgroundColor: scheme === "dark" ? "#323137" : "#ffffff"
+									backgroundColor: scheme === "dark" ? "#323137" : "#eeeeee"
 								}
 							]}
+							defaultValue={""}
 							value={password}
 							secureTextEntry={true}
 							onChangeText={updatePassword}
@@ -118,9 +124,10 @@ export function Settings() {
 								Styles.itemInput,
 								{
 									color: scheme === "dark" ? "#ffffff" : "#000000",
-									backgroundColor: scheme === "dark" ? "#323137" : "#ffffff"
+									backgroundColor: scheme === "dark" ? "#323137" : "#eeeeee"
 								}
 							]}
+							defaultValue={"https://api.telegram.org/bot<TOKEN>/sendMessage?chat_id=<CHATID>&text=%MSG%&parse_mode=markdown"}
 							value={telegram}
 							onChangeText={updateTelegram}
 							autoCapitalize={"none"}
