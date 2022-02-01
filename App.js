@@ -11,7 +11,6 @@ import { StyleSheet } from "react-native";
 import { LogBox } from "react-native";
 import { BlurView } from "expo-blur";
 import React from "react";
-import TextInjection from "react-native/Libraries/Text/TextInjection";
 
 LogBox.ignoreAllLogs();
 const Tab = createBottomTabNavigator();
@@ -62,6 +61,5 @@ function TabNavigator() {
 			<Tab.Screen name="Scanner" component={Scanner} options={ScannerOptions} />
 			<Tab.Screen name="Settings" component={Settings} options={SettingsOptions} />
 		</Tab.Navigator>
-		
 	);
 }

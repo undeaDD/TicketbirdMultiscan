@@ -3,13 +3,14 @@ import { StyleSheet } from "react-native";
 export const SettingsData = [
 	{
 		id: "0",
-		title: "Password",
-		default: "",
+		title: "Passwort:",
 	},
 	{
 		id: "1",
-		title: "Scan Type",
-		default: "0",
+		title: "Automatische Angabe:",
+	}, {
+		id: "2",
+		title: "Scans an Telegram senden:"
 	}
 ];
 
@@ -20,27 +21,30 @@ export const SettingsStyles = StyleSheet.create({
 	itemContainer: {
 		marginTop: "5%",
 		marginHorizontal: "5%",
-		height: 60,
+		height: 80,
 		width: "90%",
 		borderRadius: 10,
 		overflow: "hidden",
-		backgroundColor: "#ffffff22"
+		color: "white"
 	},
 	itemTitle: {
 		fontSize: 12,
 		color: "white",
 		height: 15,
 		width: "100%",
-		marginTop: 5
-	},
-	itemInput: {
-		width: "100%",
-		height: 40,
-		backgroundColor: "gray",
+		marginVertical: 7,
 		paddingHorizontal: 10
 	},
+	itemInput: {
+		width: "90%",
+		height: 40,
+		marginHorizontal: "5%",
+		paddingHorizontal: 10,
+		borderRadius: 6
+	},
 	itemSegmentedControl: {
-		width: "100%",
+		width: "92%",
+		marginHorizontal: "4%",
 		height: 40,
 	}
 });

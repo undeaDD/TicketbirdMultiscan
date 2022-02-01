@@ -18,18 +18,18 @@ export const DetailsOptions = {
 };
 
 export function Details( {route, navigation} ) {
-	const [injectedJS, setInjectedJS] = useState("");
-	const [url, setUrl] = useState(undefined);
-	const [codes, setCodes] = useState([]);
+	const [currentIndex, setCurrentIndex] = useState(0);
 	const [webViewKey, setWebViewKey] = useState("1");
+	const [injectedJS, setInjectedJS] = useState("");
+	const [telegram, setTelegram] = useState("");
+	const [url, setUrl] = useState(undefined);
+	const [result, setResult] = useState([]);
+	const [valids, setValids] = useState([]);
+	const [codes, setCodes] = useState([]);
 	const headerHeight = useHeaderHeight();
 	const webViewRef = useRef(null);
 	const scheme = useColorScheme();
 	const { photo } = route.params;
-		
-	const [currentIndex, setCurrentIndex] = useState(0);
-	const [result, setResult] = useState([]);
-	const [valids, setValids] = useState([]);
 
 	const onMessage = (event) => {
 		switch (event.nativeEvent.data) {
@@ -43,6 +43,17 @@ export function Details( {route, navigation} ) {
 					clone[currentIndex].icon = event.nativeEvent.data === "success" ? "check" : "error-outline";
 					setResult(clone);
 					setCurrentIndex(currentIndex + 1);
+
+					if (telegram !== "") {
+						try {
+							// TODO: replace with better text ^^
+							const msg = "%5BTMS%5D%20scan%3A%20" + event.nativeEvent.data;
+							const output = telegram.replace("%MSG%", msg);
+							fetch(output).then((response) => console.log(response)).catch((error) => console.log(error));
+						} catch (error) {
+							console.log(error);
+						}	
+					}
 
 					setUrl(valids[currentIndex].data);
 					setWebViewKey((parseInt(webViewKey) + 1).toString());
@@ -58,9 +69,11 @@ export function Details( {route, navigation} ) {
 		(async () => {
 			const password = JSON.parse(await AsyncStorage.getItem('@password'));
 			const buttonType = JSON.parse(await AsyncStorage.getItem('@scanType'));
+			const tg = JSON.parse(await AsyncStorage.getItem('@telegramUrl'));
 
 			const tempJS = getInjectedJavaScript(password, ButtonType.getButton(buttonType));
 			setInjectedJS(tempJS);
+			setTelegram(tg);
 
 			const {width, height} = await getImageSize(photo.uri);
 			const scale = Dimensions.get("window").width / width;
