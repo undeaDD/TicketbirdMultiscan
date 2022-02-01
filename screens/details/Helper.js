@@ -43,10 +43,6 @@ export class ButtonType {
     }
 }
 
-export const getInjectedJavaScriptDummy = (password, buttonType) => {
-    return "window.ReactNativeWebView.postMessage('success'); true;";
-}
-
 export const getInjectedJavaScript = (password, buttonType) => {
     return `
         /* run once */

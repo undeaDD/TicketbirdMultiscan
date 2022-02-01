@@ -33,7 +33,12 @@ export function Settings() {
 						<Text  style={Styles.itemTitle}>
 							{item.title}
 						</Text>
-						<TextInput  style={Styles.itemInput} value={password} secureTextEntry={true} onChangeText={updatePassword}/>
+						<TextInput 
+							style={Styles.itemInput}
+							value={password}
+							secureTextEntry={true}
+							onChangeText={updatePassword}
+						/>
 					</View>
 				);
 			case "1":
@@ -58,6 +63,11 @@ export function Settings() {
 	};
 
 	return (
-		<FlatList data={SettingsData} renderItem={renderItem} keyExtractor={item => item.id} styles={Styles.container} />
+		<FlatList 
+			data={SettingsData}
+			renderItem={renderItem}
+			keyExtractor={item => item.id}
+			styles={Styles.container} 
+		/>
 	);
 }
