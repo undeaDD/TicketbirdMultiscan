@@ -1,4 +1,4 @@
-import SegmentedControl from '@react-native-segmented-control/segmented-control';
+import SegmentedControl from "@react-native-segmented-control/segmented-control";
 import { FlatList, View, Text, TextInput } from "react-native";
 import { SettingsStyles as Styles, SettingsData } from "./Styles";
 import useAsyncStorage from "../helper/useAsyncStorage";
@@ -22,11 +22,11 @@ export function Settings() {
 
 	const updateScanType = (newValue) => {
 		setScanType(newValue);
-  	};
+	};
 
-  	const updatePassword = (input) => {
+	const updatePassword = (input) => {
 		setPassword(input);
-  	}
+	};
 
 	const updateTelegram = (input) => {
 		if (input === "") {
@@ -35,116 +35,116 @@ export function Settings() {
 		} else {
 			setTelegram(input);
 		}
-  	}
+	};
 
 	const renderItem = ({item}) => {
 		switch (item.id) {
-			case "0":
-				return (
-					<View 
-						key={item.id} 
+		case "0":
+			return (
+				<View 
+					key={item.id} 
+					style={[
+						Styles.itemContainer,
+						{backgroundColor: scheme === "dark" ? "#1c1c1e" : "#ffffff"}
+					]}
+				>
+					<Text style={[
+						Styles.itemTitle,
+						{color: scheme === "dark" ? "#ffffff" : "#000000"}
+					]}>
+						{item.title}
+					</Text>
+					<TextInput 
 						style={[
-							Styles.itemContainer,
-							{backgroundColor: scheme === "dark" ? "#1c1c1e" : "#ffffff"}
+							Styles.itemInput,
+							{
+								color: scheme === "dark" ? "#ffffff" : "#000000",
+								backgroundColor: scheme === "dark" ? "#323137" : "#eeeeee"
+							}
 						]}
-					>
-						<Text style={[
-							Styles.itemTitle,
-							{color: scheme === "dark" ? "#ffffff" : "#000000"}
-						]}>
-							{item.title}
-						</Text>
-						<TextInput 
-							style={[
-								Styles.itemInput,
-								{
-									color: scheme === "dark" ? "#ffffff" : "#000000",
-									backgroundColor: scheme === "dark" ? "#323137" : "#eeeeee"
-								}
-							]}
-							defaultValue={""}
-							value={password}
-							secureTextEntry={true}
-							onChangeText={updatePassword}
-							autoCapitalize={"none"}
-							autoComplete={"off"}
-							autoCorrect={false}
-							clearButtonMode={"while-editing"}
-							clearTextOnFocus={true}
-							contextMenuHidden={true}
-							disableFullscreenUI={true}
-							enablesReturnKeyAutomatically={true}
-							keyboardType={"default"}
-							returnKeyType={"done"}
-						/>
-					</View>
-				);
-			case "1":
-				return (
-					<View 
-						key={item.id} 
+						defaultValue={""}
+						value={password}
+						secureTextEntry={true}
+						onChangeText={updatePassword}
+						autoCapitalize={"none"}
+						autoComplete={"off"}
+						autoCorrect={false}
+						clearButtonMode={"while-editing"}
+						clearTextOnFocus={true}
+						contextMenuHidden={true}
+						disableFullscreenUI={true}
+						enablesReturnKeyAutomatically={true}
+						keyboardType={"default"}
+						returnKeyType={"done"}
+					/>
+				</View>
+			);
+		case "1":
+			return (
+				<View 
+					key={item.id} 
+					style={[
+						Styles.itemContainer,
+						{backgroundColor: scheme === "dark" ? "#1c1c1e" : "#ffffff"}
+					]}
+				>
+					<Text style={[
+						Styles.itemTitle,
+						{color: scheme === "dark" ? "#ffffff" : "#000000"}
+					]}>
+						{item.title}
+					</Text>
+					<SegmentedControl
+						style={Styles.itemSegmentedControl}
+						values={["Negativ", "Positiv"]}
+						selectedIndex={scanType}
+						onChange={(event) => {
+							updateScanType(event.nativeEvent.selectedSegmentIndex);
+						}}
+					/>
+				</View>
+			);
+		case "2":
+			return (
+				<View 
+					key={item.id} 
+					style={[
+						Styles.itemContainer,
+						{backgroundColor: scheme === "dark" ? "#1c1c1e" : "#ffffff"}
+					]}
+				>
+					<Text style={[
+						Styles.itemTitle,
+						{color: scheme === "dark" ? "#ffffff" : "#000000"}
+					]}>
+						{item.title}
+					</Text>
+					<TextInput 
 						style={[
-							Styles.itemContainer,
-							{backgroundColor: scheme === "dark" ? "#1c1c1e" : "#ffffff"}
+							Styles.itemInput,
+							{
+								color: scheme === "dark" ? "#ffffff" : "#000000",
+								backgroundColor: scheme === "dark" ? "#323137" : "#eeeeee"
+							}
 						]}
-					>
-						<Text style={[
-							Styles.itemTitle,
-							{color: scheme === "dark" ? "#ffffff" : "#000000"}
-						]}>
-							{item.title}
-						</Text>
-						<SegmentedControl
-							style={Styles.itemSegmentedControl}
-							values={['Negativ', 'Positiv']}
-							selectedIndex={scanType}
-							onChange={(event) => {
-								updateScanType(event.nativeEvent.selectedSegmentIndex);
-							}}
-						/>
-					</View>
-				);
-			case "2":
-				return (
-					<View 
-						key={item.id} 
-						style={[
-							Styles.itemContainer,
-							{backgroundColor: scheme === "dark" ? "#1c1c1e" : "#ffffff"}
-						]}
-					>
-						<Text style={[
-							Styles.itemTitle,
-							{color: scheme === "dark" ? "#ffffff" : "#000000"}
-						]}>
-							{item.title}
-						</Text>
-						<TextInput 
-							style={[
-								Styles.itemInput,
-								{
-									color: scheme === "dark" ? "#ffffff" : "#000000",
-									backgroundColor: scheme === "dark" ? "#323137" : "#eeeeee"
-								}
-							]}
-							defaultValue={"https://api.telegram.org/bot<TOKEN>/sendMessage?chat_id=<CHATID>&text=%MSG%&parse_mode=markdown"}
-							value={telegram}
-							onChangeText={updateTelegram}
-							autoCapitalize={"none"}
-							autoComplete={"off"}
-							autoCorrect={false}
-							clearButtonMode={"while-editing"}
-							clearTextOnFocus={false}
-							contextMenuHidden={false}
-							disableFullscreenUI={true}
-							enablesReturnKeyAutomatically={true}
-							keyboardType={"default"}
-							returnKeyType={"done"}
-						/>
-					</View>
-				);
-			default:
-				return null;
+						defaultValue={"https://api.telegram.org/bot<TOKEN>/sendMessage?chat_id=<CHATID>&text=%MSG%&parse_mode=markdown"}
+						value={telegram}
+						onChangeText={updateTelegram}
+						autoCapitalize={"none"}
+						autoComplete={"off"}
+						autoCorrect={false}
+						clearButtonMode={"while-editing"}
+						clearTextOnFocus={false}
+						contextMenuHidden={false}
+						disableFullscreenUI={true}
+						enablesReturnKeyAutomatically={true}
+						keyboardType={"default"}
+						returnKeyType={"done"}
+					/>
+				</View>
+			);
+		default:
+			return null;
 		}
 	};
 

@@ -1,11 +1,11 @@
-import { View, Platform, useColorScheme, TouchableOpacity, useWindowDimensions, Alert, Text } from "react-native";
+import { View, Platform, useColorScheme, TouchableOpacity, useWindowDimensions, Alert } from "react-native";
 import { MaterialIcons, MaterialCommunityIcons } from "@expo/vector-icons";
 import { useBottomTabBarHeight } from "@react-navigation/bottom-tabs";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import React, { useState, useEffect, useRef } from "react";
-import { ButtonType } from "../details/Helper";
-import useAsyncStorage from "../helper/useAsyncStorage";
 import { BarCodeScanner } from "expo-barcode-scanner";
 import { ScannerStyles as Styles } from "./Styles";
+import { ButtonType } from "../details/Helper";
 import * as Haptics from "expo-haptics";
 import { BlurView } from "expo-blur";
 import { Camera } from "expo-camera";
@@ -24,11 +24,14 @@ export function Scanner({navigation}) {
 	const width = useWindowDimensions().width;
 	const tabBarHeight = useBottomTabBarHeight();
 	const [flashMode, setFlashMode] = useState(false);
-	const [scanType, _setScanType] = useAsyncStorage("@scanType", 0);
+	const [scanType, setScanType] = useState(false);
 	const cameraRef = useRef(null);
 
 	useEffect(() => {
 		(async () => {
+			const tempScanType = JSON.parse(await AsyncStorage.getItem("@scanType"));
+			setScanType(tempScanType);
+
 			const { status } = await BarCodeScanner.requestPermissionsAsync();
 			if (status === undefined || status !== "granted") {
 				Alert.alert("Kein Zugriff", "Die App benötigt Zugriff auf die Kamera, um die QRCodes einzuscannen.", [{
@@ -49,7 +52,7 @@ export function Scanner({navigation}) {
 			Haptics.impactAsync("heavy");
 			var photo = await cameraRef.current.takePictureAsync();
 			navigation.navigate("Details", {photo: photo});
-		} catch(e) { console.error(e) };
+		} catch(e) { console.error(e); }
 	};
 
 	return (

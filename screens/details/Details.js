@@ -1,5 +1,5 @@
 import { View, Image, ActivityIndicator, Dimensions, useColorScheme } from "react-native";
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import { getImageSize, applyingScale } from "../helper/ImageHelper";
 import { useHeaderHeight } from "@react-navigation/elements";
 import { getInjectedJavaScript, ButtonType } from "./Helper";
@@ -33,43 +33,43 @@ export function Details( {route, navigation} ) {
 
 	const onMessage = (event) => {
 		switch (event.nativeEvent.data) {
-			case "success":
-			case "error":
-				if (currentIndex == valids.length) {
-					setCodes(result); 				 
-				} else {
-					const clone = [...result];
-					clone[currentIndex].success = event.nativeEvent.data === "success";
-					clone[currentIndex].icon = event.nativeEvent.data === "success" ? "check" : "error-outline";
-					setResult(clone);
-					setCurrentIndex(currentIndex + 1);
+		case "success":
+		case "error":
+			if (currentIndex == valids.length) {
+				setCodes(result); 				 
+			} else {
+				const clone = [...result];
+				clone[currentIndex].success = event.nativeEvent.data === "success";
+				clone[currentIndex].icon = event.nativeEvent.data === "success" ? "check" : "error-outline";
+				setResult(clone);
+				setCurrentIndex(currentIndex + 1);
 
-					if (telegram !== "") {
-						try {
-							// TODO: replace with better text ^^
-							const msg = "%5BTMS%5D%20scan%3A%20" + event.nativeEvent.data;
-							const output = telegram.replace("%MSG%", msg);
-							fetch(output).then((response) => console.log(response)).catch((error) => console.log(error));
-						} catch (error) {
-							console.log(error);
-						}	
-					}
-
-					setUrl(valids[currentIndex].data);
-					setWebViewKey((parseInt(webViewKey) + 1).toString());
+				if (telegram !== "") {
+					try {
+						// TODO: replace with better text ^^
+						const msg = "%5BTMS%5D%20scan%3A%20" + event.nativeEvent.data;
+						const output = telegram.replace("%MSG%", msg);
+						fetch(output).then((response) => console.log(response)).catch((error) => console.log(error));
+					} catch (error) {
+						console.log(error);
+					}	
 				}
-				return;
-			default:
-				console.log("unknown onMessage Event: ", event.nativeEvent.data);
-				return;
+
+				setUrl(valids[currentIndex].data);
+				setWebViewKey((parseInt(webViewKey) + 1).toString());
+			}
+			return;
+		default:
+			console.log("unknown onMessage Event: ", event.nativeEvent.data);
+			return;
 		}
 	};
 	
 	useEffect(() => {
 		(async () => {
-			const password = JSON.parse(await AsyncStorage.getItem('@password'));
-			const buttonType = JSON.parse(await AsyncStorage.getItem('@scanType'));
-			const tg = JSON.parse(await AsyncStorage.getItem('@telegramUrl'));
+			const password = JSON.parse(await AsyncStorage.getItem("@password"));
+			const buttonType = JSON.parse(await AsyncStorage.getItem("@scanType"));
+			const tg = JSON.parse(await AsyncStorage.getItem("@telegramUrl"));
 
 			const tempJS = getInjectedJavaScript(password, ButtonType.getButton(buttonType));
 			setInjectedJS(tempJS);
@@ -149,7 +149,6 @@ export function Details( {route, navigation} ) {
 				javaScriptEnabled={true}
 				cacheEnabled={false}
 				incognito={false}
-				style={{flex: 1}}
 			/>
 
 			<Image 

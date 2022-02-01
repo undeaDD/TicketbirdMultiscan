@@ -15,7 +15,7 @@ export const SettingsData = [
 ];
 
 export const SettingsStyles = StyleSheet.create({
-    container: {
+	container: {
 		...StyleSheet.absoluteFillObject
 	},
 	itemContainer: {

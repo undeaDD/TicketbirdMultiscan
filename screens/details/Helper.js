@@ -1,50 +1,50 @@
 export class ButtonType {
-    static NEGATIVE = 0;
-    static POSITIVE = 1;
-    static INVALID  = 2;
+	static NEGATIVE = 0;
+	static POSITIVE = 1;
+	static INVALID  = 2;
 
-    static getButton = (buttonType) => {
-        switch (buttonType) {
-            case 0:
-                return "btn-success";
-            case 1:
-                return "btn-danger";
-            case 2:
-                return "btn-secondary";
-            default: 
-                return "-";
-        }
-    }
+	static getButton = (buttonType) => {
+		switch (buttonType) {
+		case 0:
+			return "btn-success";
+		case 1:
+			return "btn-danger";
+		case 2:
+			return "btn-secondary";
+		default: 
+			return "-";
+		}
+	};
 
-    static getColor = (buttonType) => {
-        switch (buttonType) {
-            case 0:
-                return "#00ff00bb";
-            case 1:
-                return "#222222bb";
-            case 2:
-                return "#ff0000bb";
-            default: 
-                return "#000000bb";
-        }
-    }
+	static getColor = (buttonType) => {
+		switch (buttonType) {
+		case 0:
+			return "#00ff00bb";
+		case 1:
+			return "#222222bb";
+		case 2:
+			return "#ff0000bb";
+		default: 
+			return "#000000bb";
+		}
+	};
 
-    static getIcon = (buttonType) => {
-        switch (buttonType) {
-            case 0:
-                return "heart-minus-outline";
-            case 1:
-                return "heart-plus-outline";
-            case 2:
-                return "heart-remove-outline";
-            default: 
-                return "";
-        }
-    }
+	static getIcon = (buttonType) => {
+		switch (buttonType) {
+		case 0:
+			return "heart-minus-outline";
+		case 1:
+			return "heart-plus-outline";
+		case 2:
+			return "heart-remove-outline";
+		default: 
+			return "";
+		}
+	};
 }
 
 export const getInjectedJavaScript = (password, buttonType) => {
-    return `
+	return `
         /* run once */
         window.alert = function (msg) { window.ReactNativeWebView.postMessage("disabled popups by app"); return; };
         window.confirm = function (msg) { window.ReactNativeWebView.postMessage("disabled popups by app"); return true; };
@@ -88,4 +88,4 @@ export const getInjectedJavaScript = (password, buttonType) => {
         /* return boolean; always needed at the end of injected js */
         true;
     `;
-}
+};
