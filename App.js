@@ -1,10 +1,10 @@
+import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { Settings, SettingsOptions } from "./screens/settings/Settings";
 import { Scanner, ScannerOptions } from "./screens/scanner/Scanner";
 import { Details, DetailsOptions } from "./screens/details/Details";
 import { DefaultTheme, DarkTheme } from "@react-navigation/native";
 import { NavigationContainer } from "@react-navigation/native";
-import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { useColorScheme } from "react-native";
 import { StatusBar } from "expo-status-bar";
 import { StyleSheet } from "react-native";
