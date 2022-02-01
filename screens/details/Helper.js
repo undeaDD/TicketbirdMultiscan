@@ -28,9 +28,26 @@ export class ButtonType {
                 return "#000000bb";
         }
     }
+
+    static getIcon = (buttonType) => {
+        switch (buttonType) {
+            case 0:
+                return "heart-minus-outline";
+            case 1:
+                return "heart-plus-outline";
+            case 2:
+                return "heart-remove-outline";
+            default: 
+                return "";
+        }
+    }
 }
 
-export default getInjectedJavaScript = (password, buttonType) => {
+export const getInjectedJavaScriptDummy = (password, buttonType) => {
+    return "window.ReactNativeWebView.postMessage('success'); true;";
+}
+
+export const getInjectedJavaScript = (password, buttonType) => {
     return `
         /* run once */
         window.alert = function (msg) { window.ReactNativeWebView.postMessage("disabled popups by app"); return; };

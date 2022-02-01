@@ -2,7 +2,7 @@ import { View, Platform, useColorScheme, TouchableOpacity, useWindowDimensions, 
 import { MaterialIcons, MaterialCommunityIcons } from "@expo/vector-icons";
 import { useBottomTabBarHeight } from "@react-navigation/bottom-tabs";
 import React, { useState, useEffect, useRef } from "react";
-import { ButtonType } from "../details/injectedJavaScript";
+import { ButtonType } from "../details/Helper";
 import useAsyncStorage from "../helper/useAsyncStorage";
 import { BarCodeScanner } from "expo-barcode-scanner";
 import { ScannerStyles as Styles } from "./Styles";
@@ -89,7 +89,14 @@ export function Scanner({navigation}) {
 					{bottom: tabBarHeight + 10, left: width / 2 - 35}, { backgroundColor: ButtonType.getColor(scanType) }, {borderColor: "white"},
 					Styles.takePictureButton
 				]}
-			/>
+			>
+				<MaterialCommunityIcons
+					name={ ButtonType.getIcon(scanType) }
+					size={40}
+					color="#ffffffdd"
+					style={Styles.takePictureIcon}
+				/>
+			</TouchableOpacity>
 		</View>
 	);
 }

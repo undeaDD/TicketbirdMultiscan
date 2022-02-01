@@ -1,61 +1,65 @@
 import { View, Image, ActivityIndicator, Dimensions, useColorScheme } from "react-native";
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { getImageSize, applyingScale } from "../helper/ImageHelper";
 import { useHeaderHeight } from "@react-navigation/elements";
-import { getInjectedJavaScript } from "./injectedJavaScript";
+import { getInjectedJavaScript, ButtonType } from "./Helper";
 import React, { useState, useEffect, useRef } from "react";
 import { BarCodeScanner } from "expo-barcode-scanner";
 import { MaterialIcons } from "@expo/vector-icons";
+import { AsyncAlert } from "../helper/AsyncAlert";
 import { DetailsStyles } from "./DetailsStyles";
 import { WebView } from "react-native-webview";
 import * as FileSystem from "expo-file-system";
 import { BlurView } from "expo-blur";
-
 
 export const DetailsOptions = {
 	title: "Ergebnisse",
 	headerShown: true
 };
 
-export function Details({route, navigation}) {
-	const injectedJavaScript = getInjectedJavaScript("", "")
+export function Details( {route, navigation} ) {
+	const [injectedJS, setInjectedJS] = useState("");
 	const [url, setUrl] = useState(undefined);
 	const [codes, setCodes] = useState([]);
+	const [webViewKey, setWebViewKey] = useState("1");
 	const headerHeight = useHeaderHeight();
 	const webViewRef = useRef(null);
 	const scheme = useColorScheme();
 	const { photo } = route.params;
-
-	var currentIndex = 0;
-	var result = [];
-	var valids = [];
 		
+	const [currentIndex, setCurrentIndex] = useState(0);
+	const [result, setResult] = useState([]);
+	const [valids, setValids] = useState([]);
+
 	const onMessage = (event) => {
-		console.log("Got Message: ", event.nativeEvent.data)
 		switch (event.nativeEvent.data) {
 			case "success":
-				/*if (currentIndex == valids.length) {
-					setCodes(result); 				 
-				} else {
-					result[currentIndex].success = true;
-					result[currentIndex].icon = "check";
-					currentIndex += 1;
-					setUrl(valids[currentIndex].data);
-				}*/
 			case "error":
-				/*if (currentIndex == valids.length) {
+				if (currentIndex == valids.length) {
 					setCodes(result); 				 
 				} else {
-					result[currentIndex].success = false;
-					result[currentIndex].icon = "error-outline";
-					currentIndex += 1;
+					const clone = [...result];
+					clone[currentIndex].success = event.nativeEvent.data === "success";
+					clone[currentIndex].icon = event.nativeEvent.data === "success" ? "check" : "error-outline";
+					setResult(clone);
+					setCurrentIndex(currentIndex + 1);
+
 					setUrl(valids[currentIndex].data);
-				}*/
+					setWebViewKey((parseInt(webViewKey) + 1).toString());
+				}
+				return;
 			default:
 				console.log("unknown onMessage Event: ", event.nativeEvent.data);
+				return;
 		}
 	};
 	
 	useEffect(() => {
 		(async () => {
+			const password = await AsyncStorage.getItem('@password')
+			const buttonType = await AsyncStorage.getItem('@scanType')
+			setInjectedJS(getInjectedJavaScript(password, ButtonType.getValue(buttonType)));
+
 			const {width, height} = await getImageSize(photo.uri);
 			const scale = Dimensions.get("window").width / width;
 
@@ -65,6 +69,9 @@ export function Details({route, navigation}) {
 				FileSystem.deleteAsync(photo.uri);
 				return;
 			}
+
+			var tempResult = [];
+			var tempValids = [];
 
 			var scans = await BarCodeScanner.scanFromURLAsync(photo.uri, [BarCodeScanner.Constants.BarCodeType.qr]);
 			var indexId = 0;
@@ -78,19 +85,21 @@ export function Details({route, navigation}) {
 				) {
 					code.success = false;
 					code.icon = "link-off";
-					result.push(code);
+					tempResult.push(code);
 					continue;
 				}
 				
 				code.success = false;
 				code.icon = "not-listed-location";
-				result.push(code);
-				valids.push(code);
+				tempResult.push(code);
+				tempValids.push(code);
 				continue;
 			}
 
-			if (result.length > 0) {
-				setUrl(valids[currentIndex].data);
+			if (tempResult.length > 0) {
+				setResult(tempResult);
+				setValids(tempValids);
+				setUrl(tempValids[currentIndex].data);
 			} else {
 				await AsyncAlert("Erneut Scannen", "Die App konnte keine (gültigen) QRCodes in dem Scan finden.");
 				navigation.goBack();
@@ -103,6 +112,7 @@ export function Details({route, navigation}) {
 	return (
 		<View style={DetailsStyles.container}>
 			<WebView
+				key={webViewKey}
 				bounces={false}
 				source={{uri: url}}
 				ref={webViewRef}
@@ -119,11 +129,12 @@ export function Details({route, navigation}) {
 				mixedContentMode={"compability"}
 				setSupportMultipleWindows={false}
 				javaScriptCanOpenWindowsAutomatically={true}
-				injectedJavaScriptBeforeContentLoaded={injectedJavaScript}
+				injectedJavaScriptBeforeContentLoaded={injectedJS}
 				javaScriptEnabledAndroid={true}
 				javaScriptEnabled={true}
 				cacheEnabled={false}
 				incognito={false}
+				style={{flex: 1}}
 			/>
 
 			<Image 

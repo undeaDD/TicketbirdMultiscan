@@ -28,7 +28,13 @@ export const ScannerStyles = StyleSheet.create({
 		height: 70,
 		borderWidth: 4,
 		borderRadius: 35,
-		position: "absolute"
+		position: "absolute",
+		alignItems: "center"
+	},
+	takePictureIcon: {
+		width: 70,
+		height: 70,
+		padding: 14,
 	}
 });
      

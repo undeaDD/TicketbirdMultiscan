@@ -11,6 +11,7 @@ import { StyleSheet } from "react-native";
 import { LogBox } from "react-native";
 import { BlurView } from "expo-blur";
 import React from "react";
+import TextInjection from "react-native/Libraries/Text/TextInjection";
 
 LogBox.ignoreAllLogs();
 const Tab = createBottomTabNavigator();
@@ -26,6 +27,7 @@ export default function App() {
 				screenOptions={{
 					headerTransparent: true,
 					unmountOnBlur: true,
+					headerTintColor: theme.colors.text
 				}}
 			>
 				<Stack.Screen name="Tab" component={TabNavigator} options={TabNavigatorOptions}/>
