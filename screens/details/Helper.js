@@ -3,7 +3,7 @@ export class ButtonType {
     static POSITIVE = 1;
     static INVALID  = 2;
 
-    static getValue = (buttonType) => {
+    static getButton = (buttonType) => {
         switch (buttonType) {
             case 0:
                 return "btn-success";
@@ -56,7 +56,7 @@ export const getInjectedJavaScript = (password, buttonType) => {
 
             /* check for login page */
             if (document.getElementById('passwordform-password')) {
-                document.getElementById('passwordform-password').value  = '${password}';
+                document.getElementById('passwordform-password').value = '${password}';
                 document.querySelectorAll('button[type=submit]')[0].click();
                 return;
             }

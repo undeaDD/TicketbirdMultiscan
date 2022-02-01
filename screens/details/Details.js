@@ -56,9 +56,11 @@ export function Details( {route, navigation} ) {
 	
 	useEffect(() => {
 		(async () => {
-			const password = await AsyncStorage.getItem('@password')
-			const buttonType = await AsyncStorage.getItem('@scanType')
-			setInjectedJS(getInjectedJavaScript(password, ButtonType.getValue(buttonType)));
+			const password = JSON.parse(await AsyncStorage.getItem('@password'));
+			const buttonType = JSON.parse(await AsyncStorage.getItem('@scanType'));
+
+			const tempJS = getInjectedJavaScript(password, ButtonType.getButton(buttonType));
+			setInjectedJS(tempJS);
 
 			const {width, height} = await getImageSize(photo.uri);
 			const scale = Dimensions.get("window").width / width;
