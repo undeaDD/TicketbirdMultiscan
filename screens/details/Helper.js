@@ -85,6 +85,7 @@ export const getInjectedJavaScript = (password, buttonType) => {
             injectCode(); /* run code on finished pageLoad */
         });
 
-        true; /* return boolean; always needed at the end of injected js */
+        /* return boolean; always needed at the end of injected js */
+        true;
     `;
 }
