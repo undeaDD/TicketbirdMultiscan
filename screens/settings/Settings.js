@@ -44,7 +44,7 @@ export function Settings() {
 						</Text>
 						<SegmentedControl
 							style={Styles.itemSegmentedControl}
-							values={['Negativ', 'Positiv']}
+							values={['Negativ', 'per Test']}
 							selectedIndex={scanType}
 							onChange={(event) => {
 								updateScanType(event.nativeEvent.selectedSegmentIndex);
