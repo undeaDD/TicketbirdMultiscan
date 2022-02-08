@@ -35,6 +35,17 @@ export const ScannerStyles = StyleSheet.create({
 		width: 70,
 		height: 70,
 		padding: 14,
+	},
+	infoLabel: {
+		right: 0,
+		width: 100,
+		margin: 15,
+		position: "absolute",
+		top: Constants.statusBarHeight,
+		textAlignVertical: "center",
+		backgroundColor: "red",
+		textAlignVertical: "center",
+		textAlign: "center"
 	}
 });
      

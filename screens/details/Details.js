@@ -11,6 +11,7 @@ import { DetailsStyles } from "./DetailsStyles";
 import { WebView } from "react-native-webview";
 import * as FileSystem from "expo-file-system";
 import { BlurView } from "expo-blur";
+import { TouchableOpacity } from "react-native-gesture-handler";
 
 export const DetailsOptions = {
 	title: "Ergebnisse",
@@ -159,7 +160,7 @@ export function Details( {route, navigation} ) {
 
 			{codes.map((code, index) => {
 				return (
-					<View 
+					<TouchableOpacity 
 						key={index} 
 						style={[ 
 							DetailsStyles.overlays, 
@@ -174,19 +175,16 @@ export function Details( {route, navigation} ) {
 						]}
 					>
 						<MaterialIcons name={code.icon} size={code.size - 40} color={code.success ? "black" : "white"} />
-					</View>
+					</TouchableOpacity>
 				);
 			})}
 
 			<BlurView
 				intensity={100}
 				tint={scheme === "dark" ? "dark" : "light"}
-				style={[DetailsStyles.headerBackground, {height: codes.length === 0 ? "100%" : headerHeight}]}
+				style={[DetailsStyles.headerBackground, {height: headerHeight}]}
 			/>
 
-			{ codes.length === 0 &&
-				<ActivityIndicator size="large" style={DetailsStyles.spinner}/>
-			}
 		</View>
 	);
 }

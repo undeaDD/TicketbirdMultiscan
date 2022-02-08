@@ -1,4 +1,4 @@
-import { View, Platform, useColorScheme, TouchableOpacity, useWindowDimensions, Alert } from "react-native";
+import { View, Platform, useColorScheme, TouchableOpacity, useWindowDimensions, Alert, Text } from "react-native";
 import { MaterialIcons, MaterialCommunityIcons } from "@expo/vector-icons";
 import { useBottomTabBarHeight } from "@react-navigation/bottom-tabs";
 import AsyncStorage from "@react-native-async-storage/async-storage";
@@ -100,6 +100,11 @@ export function Scanner({navigation}) {
 					style={Styles.takePictureIcon}
 				/>
 			</TouchableOpacity>
+			<Text
+				style={[Styles.infoLabel, {color: scheme === "dark" ? "white" : "black", }]}
+			>
+				Scanned: 1000
+			</Text>
 		</View>
 	);
 }
