@@ -1,4 +1,4 @@
-import { View, Image, ActivityIndicator, Dimensions, useColorScheme } from "react-native";
+import { View, Image, ActivityIndicator, Dimensions, useColorScheme, TouchableOpacity } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { getImageSize, applyingScale } from "../helper/ImageHelper";
 import { useHeaderHeight } from "@react-navigation/elements";
@@ -11,7 +11,6 @@ import { DetailsStyles } from "./DetailsStyles";
 import { WebView } from "react-native-webview";
 import * as FileSystem from "expo-file-system";
 import { BlurView } from "expo-blur";
-import { TouchableOpacity } from "react-native-gesture-handler";
 
 export const DetailsOptions = {
 	title: "Ergebnisse",
@@ -31,6 +30,11 @@ export function Details( {route, navigation} ) {
 	const webViewRef = useRef(null);
 	const scheme = useColorScheme();
 	const { photo } = route.params;
+
+	const processQRCode = (code) => {
+		code.evaluation = (code.evaluation + 1 )% 3;
+		console.log("Test is now ", (code.evaluation == 0 ? "negative" : (code.evaluation == 1 ? "positive" : "broken")));
+	}
 
 	const onMessage = (event) => {
 		switch (event.nativeEvent.data) {
@@ -52,7 +56,7 @@ export function Details( {route, navigation} ) {
 						const output = telegram.replace("%MSG%", msg);
 						fetch(output).then((response) => console.log(response)).catch((error) => console.log(error));
 					} catch (error) {
-						console.log(error);
+						//console.log(error);
 					}	
 				}
 
@@ -90,6 +94,7 @@ export function Details( {route, navigation} ) {
 			var tempValids = [];
 
 			var scans = await BarCodeScanner.scanFromURLAsync(photo.uri, [BarCodeScanner.Constants.BarCodeType.qr]);
+			
 			var indexId = 0;
 			for (const qrCode of scans) {
 				var code = applyingScale(qrCode, scale, indexId);
@@ -162,6 +167,7 @@ export function Details( {route, navigation} ) {
 				return (
 					<TouchableOpacity 
 						key={index} 
+						onPress={()=>{processQRCode(code)}}
 						style={[ 
 							DetailsStyles.overlays, 
 							{
@@ -170,12 +176,12 @@ export function Details( {route, navigation} ) {
 								width: code.size - 20,
 								height: code.size - 20,
 								borderRadius: (code.size - 20) / 2,
-								backgroundColor: code.success ? "#00ff00bb" : "#ff0000bb"
+								backgroundColor: (0 === 0 ? "#00ff00bb" : (1 === 1 ? "#ff0000bb" : "#a0a0a0bb"))//needs to follow code.evaluation
 							}
 						]}
 					>
 						<MaterialIcons name={code.icon} size={code.size - 40} color={code.success ? "black" : "white"} />
-					</TouchableOpacity>
+					</TouchableOpacity>//needs to follow code.evaluation
 				);
 			})}
 

@@ -15,5 +15,6 @@ export const applyingScale = (code, scale, id) => {
 	obj.size = code.bounds.size.width * scale;
 	obj.success = false;
 	obj.icon = "cancel";
+	obj.evaluation = 0; //0 negative; 1 positive; 2 failed
 	return obj;
 };
