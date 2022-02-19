@@ -1,4 +1,4 @@
-import { View, Platform, useColorScheme, TouchableOpacity, useWindowDimensions, Alert, Text } from "react-native";
+import { View, Platform, useColorScheme, TouchableOpacity, useWindowDimensions, Alert } from "react-native";
 import { MaterialIcons, MaterialCommunityIcons } from "@expo/vector-icons";
 import { useBottomTabBarHeight } from "@react-navigation/bottom-tabs";
 import AsyncStorage from "@react-native-async-storage/async-storage";
@@ -7,6 +7,7 @@ import { BarCodeScanner } from "expo-barcode-scanner";
 import { ScannerStyles as Styles } from "./Styles";
 import { ButtonType } from "../details/Helper";
 import * as Haptics from "expo-haptics";
+import { log } from "../helper/logger";
 import { BlurView } from "expo-blur";
 import { Camera } from "expo-camera";
 
@@ -52,7 +53,9 @@ export function Scanner({navigation}) {
 			Haptics.impactAsync("heavy");
 			var photo = await cameraRef.current.takePictureAsync();
 			navigation.navigate("Details", {photo: photo});
-		} catch(e) { console.error(e); }
+		} catch(e) {
+			log("Failed takePhoto: " + e);
+		}
 	};
 
 	return (
@@ -100,11 +103,6 @@ export function Scanner({navigation}) {
 					style={Styles.takePictureIcon}
 				/>
 			</TouchableOpacity>
-			<Text
-				style={[Styles.infoLabel, {color: scheme === "dark" ? "white" : "black", }]}
-			>
-				Scanned: 1000
-			</Text>
 		</View>
 	);
 }

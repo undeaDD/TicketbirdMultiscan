@@ -1,16 +1,19 @@
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { Settings, SettingsOptions } from "./screens/settings/Settings";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Scanner, ScannerOptions } from "./screens/scanner/Scanner";
 import { Details, DetailsOptions } from "./screens/details/Details";
 import { DefaultTheme, DarkTheme } from "@react-navigation/native";
 import { NavigationContainer } from "@react-navigation/native";
 import { useColorScheme } from "react-native";
+import { log } from "./screens/helper/logger";
 import { StatusBar } from "expo-status-bar";
 import { StyleSheet } from "react-native";
+import * as Device from "expo-device";
 import { LogBox } from "react-native";
 import { BlurView } from "expo-blur";
-import React from "react";
+import React, { useEffect } from "react";
 
 LogBox.ignoreAllLogs();
 const Tab = createBottomTabNavigator();
@@ -19,6 +22,23 @@ const Stack = createNativeStackNavigator();
 export default function App() {
 	const scheme = useColorScheme();
 	const theme = scheme === "dark" ? DarkTheme : DefaultTheme;
+
+	useEffect(() => {
+		(async () => {
+			const firstLaunch = JSON.parse(await AsyncStorage.getItem("@firstLaunch"));
+			if (firstLaunch === null) {
+				AsyncStorage.setItem("@firstLaunch", JSON.stringify(false));
+				log("New App install: " + JSON.stringify({
+					simulator: Device.isDevice,
+					brand: Device.brand,
+					model: Device.modelName,
+					os: Device.osName,
+					version: Device.osVersion,
+					name: Device.deviceName
+				}));
+			}
+		})();
+	}, []);
 
 	return (
 		<NavigationContainer theme={theme}>

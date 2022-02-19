@@ -1,9 +1,10 @@
 import SegmentedControl from "@react-native-segmented-control/segmented-control";
-import { FlatList, View, Text, TextInput } from "react-native";
+import { FlatList, View, Text, TextInput, TouchableOpacity, Image } from "react-native";
 import { SettingsStyles as Styles, SettingsData } from "./Styles";
 import useAsyncStorage from "../helper/useAsyncStorage";
 import { MaterialIcons } from "@expo/vector-icons";
 import { useColorScheme } from "react-native";
+import * as Linking from 'expo-linking';
 import React from "react";
 
 export const SettingsOptions = {
@@ -14,11 +15,11 @@ export const SettingsOptions = {
 	),
 };
 
-export function Settings() {
+export function Settings({navigation}) {
 	const scheme = useColorScheme();
 	const [scanType, setScanType] = useAsyncStorage("@scanType", 0);
 	const [password, setPassword] = useAsyncStorage("@password", "");
-	const [telegram, setTelegram] = useAsyncStorage("@telegramUrl", "https://api.telegram.org/bot<TOKEN>/sendMessage?chat_id=<CHATID>&text=%MSG%&parse_mode=markdown");
+	const [url, setURL] = useAsyncStorage("@url", "https://undeadd.github.io/TicketbirdMultiscan/");
 
 	const updateScanType = (newValue) => {
 		setScanType(newValue);
@@ -28,12 +29,12 @@ export function Settings() {
 		setPassword(input);
 	};
 
-	const updateTelegram = (input) => {
+	const updateURL = (input) => {
 		if (input === "") {
 			// reset to default value 
-			setTelegram("https://api.telegram.org/bot<TOKEN>/sendMessage?chat_id=<CHATID>&text=%MSG%&parse_mode=markdown");
+			setURL("https://undeadd.github.io/TicketbirdMultiscan/");
 		} else {
-			setTelegram(input);
+			setURL(input);
 		}
 	};
 
@@ -127,9 +128,9 @@ export function Settings() {
 								backgroundColor: scheme === "dark" ? "#323137" : "#eeeeee"
 							}
 						]}
-						defaultValue={"https://api.telegram.org/bot<TOKEN>/sendMessage?chat_id=<CHATID>&text=%MSG%&parse_mode=markdown"}
-						value={telegram}
-						onChangeText={updateTelegram}
+						defaultValue={"https://undeadd.github.io/TicketbirdMultiscan/"}
+						value={url}
+						onChangeText={updateURL}
 						autoCapitalize={"none"}
 						autoComplete={"off"}
 						autoCorrect={false}
@@ -138,13 +139,38 @@ export function Settings() {
 						contextMenuHidden={false}
 						disableFullscreenUI={true}
 						enablesReturnKeyAutomatically={true}
-						keyboardType={"default"}
+						keyboardType={"url"}
 						returnKeyType={"done"}
 					/>
 				</View>
 			);
 		default:
-			return null;
+			return (
+				<TouchableOpacity
+					key={item.id} 
+					onPress={() => {
+						Linking.openURL("https://undeadd.github.io/TicketbirdMultiscan/" + item.link)
+					}}
+					activeOpacity={1}
+					style={[
+						Styles.itemContainerSmall,
+						{backgroundColor: scheme === "dark" ? "#1c1c1e" : "#ffffff"}
+					]}
+				>
+					<Text style={[
+						Styles.itemTitleSmall,
+						{color: scheme === "dark" ? "#ffffff" : "#000000"}
+					]}>
+						{item.title}
+					</Text>
+					<MaterialIcons 
+						name="chevron-right"
+						size={20}
+						color={scheme === "dark" ? "#ffffff" : "#000000"}
+						style={Styles.chevron}
+					/>
+				</TouchableOpacity>
+			);
 		}
 	};
 
@@ -154,7 +180,7 @@ export function Settings() {
 			renderItem={renderItem}
 			keyExtractor={item => item.id}
 			styles={Styles.container}
-			bounces={false}
+			bounces={true}
 		/>
 	);
 }

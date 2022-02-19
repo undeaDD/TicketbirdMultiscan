@@ -44,7 +44,6 @@ export const ScannerStyles = StyleSheet.create({
 		top: Constants.statusBarHeight,
 		textAlignVertical: "center",
 		backgroundColor: "red",
-		textAlignVertical: "center",
 		textAlign: "center"
 	}
 });

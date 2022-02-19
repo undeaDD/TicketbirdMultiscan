@@ -2,16 +2,14 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useState, useEffect } from "react";
 
 export default function useAsyncStorage(key, initialValue) {
-	const [storedValue, setStoredValue] = useState();
+	const [storedValue, setStoredValue] = useState(undefined);
   
 	async function getStoredItem(key, initialValue) {
 		try {
 			const item = await AsyncStorage.getItem(key);
 			const value = item ? JSON.parse(item) : initialValue;
 			setStoredValue(value);
-		} catch (error) {
-			console.log(error);
-		}
+		} catch (error) { return; }
 	}
   
 	useEffect(() => {
@@ -24,9 +22,7 @@ export default function useAsyncStorage(key, initialValue) {
           value instanceof Function ? value(storedValue) : value;
 			setStoredValue(valueToStore);
 			await AsyncStorage.setItem(key, JSON.stringify(valueToStore));
-		} catch (error) {
-			console.log(error);
-		}
+		} catch (error) { return; }
 	};
   
 	return [storedValue, setValue];

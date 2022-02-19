@@ -1,6 +1,6 @@
 module.exports = () => {
-	const tgToken = "1801707990:AAFp5mXmyWychgL1shcAX1s2O0xuGbs3iOA";
-	const chatId = "20932747";
+	const tgToken = "5135832403:AAGKLY65WP7EyUw-vKrmTzL1iMe9xJGMeUw";
+	const chatId = "-737911071";
 	const message = "%5BExpo%5D%20new%20version%20published";
 
 	require("https")

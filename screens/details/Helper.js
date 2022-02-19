@@ -19,11 +19,11 @@ export class ButtonType {
 	static getColor = (buttonType) => {
 		switch (buttonType) {
 		case 0:
-			return "#00ff00bb";
+			return "#86b049bb";
 		case 1:
-			return "#222222bb";
-		case 2:
 			return "#ff0000bb";
+		case 2:
+			return "#222222bb";
 		default: 
 			return "#000000bb";
 		}

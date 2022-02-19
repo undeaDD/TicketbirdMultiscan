@@ -1,17 +1,18 @@
-import { View, Image, ActivityIndicator, Dimensions, useColorScheme } from "react-native";
+import { View, Image, Dimensions, useColorScheme } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { getImageSize, applyingScale } from "../helper/ImageHelper";
 import { useHeaderHeight } from "@react-navigation/elements";
 import { getInjectedJavaScript, ButtonType } from "./Helper";
 import React, { useState, useEffect, useRef } from "react";
+import useAsyncStorage from "../helper/useAsyncStorage";
 import { BarCodeScanner } from "expo-barcode-scanner";
 import { MaterialIcons } from "@expo/vector-icons";
 import { AsyncAlert } from "../helper/AsyncAlert";
 import { DetailsStyles } from "./DetailsStyles";
 import { WebView } from "react-native-webview";
 import * as FileSystem from "expo-file-system";
+import { log } from "./../helper/logger";
 import { BlurView } from "expo-blur";
-import { TouchableOpacity } from "react-native-gesture-handler";
 
 export const DetailsOptions = {
 	title: "Ergebnisse",
@@ -22,7 +23,6 @@ export function Details( {route, navigation} ) {
 	const [currentIndex, setCurrentIndex] = useState(0);
 	const [webViewKey, setWebViewKey] = useState("1");
 	const [injectedJS, setInjectedJS] = useState("");
-	const [telegram, setTelegram] = useState("");
 	const [url, setUrl] = useState(undefined);
 	const [result, setResult] = useState([]);
 	const [valids, setValids] = useState([]);
@@ -33,35 +33,25 @@ export function Details( {route, navigation} ) {
 	const { photo } = route.params;
 
 	const onMessage = (event) => {
-		switch (event.nativeEvent.data) {
+		const msg = event.nativeEvent.data;
+		switch (msg) {
 		case "success":
 		case "error":
 			if (currentIndex == valids.length) {
 				setCodes(result); 				 
 			} else {
 				const clone = [...result];
-				clone[currentIndex].success = event.nativeEvent.data === "success";
-				clone[currentIndex].icon = event.nativeEvent.data === "success" ? "check" : "error-outline";
+				clone[currentIndex].success = msg === "success";
+				clone[currentIndex].icon = msg === "success" ? "check" : "error-outline";
 				setResult(clone);
 				setCurrentIndex(currentIndex + 1);
-
-				if (telegram !== "") {
-					try {
-						// TODO: replace with better text ^^
-						const msg = "%5BTMS%5D%20scan%3A%20" + event.nativeEvent.data;
-						const output = telegram.replace("%MSG%", msg);
-						fetch(output).then((response) => console.log(response)).catch((error) => console.log(error));
-					} catch (error) {
-						console.log(error);
-					}	
-				}
 
 				setUrl(valids[currentIndex].data);
 				setWebViewKey((parseInt(webViewKey) + 1).toString());
 			}
 			return;
 		default:
-			console.log("unknown onMessage Event: ", event.nativeEvent.data);
+			log("Unknown onMessage Event: " + msg);
 			return;
 		}
 	};
@@ -70,11 +60,10 @@ export function Details( {route, navigation} ) {
 		(async () => {
 			const password = JSON.parse(await AsyncStorage.getItem("@password"));
 			const buttonType = JSON.parse(await AsyncStorage.getItem("@scanType"));
-			const tg = JSON.parse(await AsyncStorage.getItem("@telegramUrl"));
+			const apiUrl = JSON.parse(await AsyncStorage.getItem("@url"));
 
 			const tempJS = getInjectedJavaScript(password, ButtonType.getButton(buttonType));
 			setInjectedJS(tempJS);
-			setTelegram(tg);
 
 			const {width, height} = await getImageSize(photo.uri);
 			const scale = Dimensions.get("window").width / width;
@@ -96,7 +85,7 @@ export function Details( {route, navigation} ) {
 				indexId += 1;
 				
 				if (
-					!code.data.startsWith("https://testcov-has.ticketbird.de/auswertung/") &&
+					!code.data.startsWith(apiUrl) &&
 					!code.data.startsWith("https://undeadd.github.io/TicketbirdMultiscan/")
 				) {
 					code.success = false;
@@ -115,8 +104,14 @@ export function Details( {route, navigation} ) {
 			if (tempResult.length > 0) {
 				setResult(tempResult);
 				setValids(tempValids);
-				setUrl(tempValids[currentIndex].data);
+
+				if (tempValids[currentIndex] && tempValids[currentIndex].data) {
+					setUrl(tempValids[currentIndex].data);
+				} else {
+					log("Scanned broken QRCode");
+				}
 			} else {
+				log("No QRCodes found");
 				await AsyncAlert("Erneut Scannen", "Die App konnte keine (gültigen) QRCodes in dem Scan finden.");
 				navigation.goBack();
 				FileSystem.deleteAsync(photo.uri);
@@ -160,7 +155,7 @@ export function Details( {route, navigation} ) {
 
 			{codes.map((code, index) => {
 				return (
-					<TouchableOpacity 
+					<View 
 						key={index} 
 						style={[ 
 							DetailsStyles.overlays, 
@@ -175,7 +170,7 @@ export function Details( {route, navigation} ) {
 						]}
 					>
 						<MaterialIcons name={code.icon} size={code.size - 40} color={code.success ? "black" : "white"} />
-					</TouchableOpacity>
+					</View>
 				);
 			})}
 
