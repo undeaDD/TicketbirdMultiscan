@@ -4,7 +4,6 @@ import { getImageSize, applyingScale } from "../helper/ImageHelper";
 import { useHeaderHeight } from "@react-navigation/elements";
 import { getInjectedJavaScript, ButtonType } from "./Helper";
 import React, { useState, useEffect, useRef } from "react";
-import useAsyncStorage from "../helper/useAsyncStorage";
 import { BarCodeScanner } from "expo-barcode-scanner";
 import { MaterialIcons } from "@expo/vector-icons";
 import { AsyncAlert } from "../helper/AsyncAlert";
@@ -32,6 +31,11 @@ export function Details( {route, navigation} ) {
 	const scheme = useColorScheme();
 	const { photo } = route.params;
 
+	const processQRCode = (code) => {
+		code.evaluation = (code.evaluation + 1 )% 3;
+		console.log("Test is now ", (code.evaluation == 0 ? "negative" : (code.evaluation == 1 ? "positive" : "broken")));
+	}
+
 	const onMessage = (event) => {
 		const msg = event.nativeEvent.data;
 		switch (msg) {
@@ -45,7 +49,6 @@ export function Details( {route, navigation} ) {
 				clone[currentIndex].icon = msg === "success" ? "check" : "error-outline";
 				setResult(clone);
 				setCurrentIndex(currentIndex + 1);
-
 				setUrl(valids[currentIndex].data);
 				setWebViewKey((parseInt(webViewKey) + 1).toString());
 			}
@@ -79,6 +82,7 @@ export function Details( {route, navigation} ) {
 			var tempValids = [];
 
 			var scans = await BarCodeScanner.scanFromURLAsync(photo.uri, [BarCodeScanner.Constants.BarCodeType.qr]);
+			
 			var indexId = 0;
 			for (const qrCode of scans) {
 				var code = applyingScale(qrCode, scale, indexId);
@@ -157,6 +161,7 @@ export function Details( {route, navigation} ) {
 				return (
 					<View 
 						key={index} 
+						onPress={()=>{processQRCode(code)}}
 						style={[ 
 							DetailsStyles.overlays, 
 							{
@@ -165,7 +170,7 @@ export function Details( {route, navigation} ) {
 								width: code.size - 20,
 								height: code.size - 20,
 								borderRadius: (code.size - 20) / 2,
-								backgroundColor: code.success ? "#00ff00bb" : "#ff0000bb"
+								backgroundColor: (0 === 0 ? "#00ff00bb" : (1 === 1 ? "#ff0000bb" : "#a0a0a0bb"))//needs to follow code.evaluation
 							}
 						]}
 					>
