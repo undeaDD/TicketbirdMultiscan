@@ -10,10 +10,10 @@ import { useColorScheme } from "react-native";
 import { log } from "./screens/helper/logger";
 import { StatusBar } from "expo-status-bar";
 import { StyleSheet } from "react-native";
+import React, { useEffect } from "react";
 import * as Device from "expo-device";
 import { LogBox } from "react-native";
 import { BlurView } from "expo-blur";
-import React, { useEffect } from "react";
 
 LogBox.ignoreAllLogs();
 const Tab = createBottomTabNavigator();

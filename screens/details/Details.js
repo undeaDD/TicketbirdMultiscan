@@ -34,7 +34,7 @@ export function Details( {route, navigation} ) {
 	const processQRCode = (code) => {
 		code.evaluation = (code.evaluation + 1 )% 3;
 		console.log("Test is now ", (code.evaluation == 0 ? "negative" : (code.evaluation == 1 ? "positive" : "broken")));
-	}
+	};
 
 	const onMessage = (event) => {
 		const msg = event.nativeEvent.data;
@@ -161,7 +161,7 @@ export function Details( {route, navigation} ) {
 				return (
 					<View 
 						key={index} 
-						onPress={()=>{processQRCode(code)}}
+						onPress={()=>{processQRCode(code);}}
 						style={[ 
 							DetailsStyles.overlays, 
 							{
@@ -170,7 +170,7 @@ export function Details( {route, navigation} ) {
 								width: code.size - 20,
 								height: code.size - 20,
 								borderRadius: (code.size - 20) / 2,
-								backgroundColor: (0 === 0 ? "#00ff00bb" : (1 === 1 ? "#ff0000bb" : "#a0a0a0bb"))//needs to follow code.evaluation
+								backgroundColor: code.success ? "#00ff00bb" : "#ff0000bb"
 							}
 						]}
 					>

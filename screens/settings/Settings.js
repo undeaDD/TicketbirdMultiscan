@@ -1,10 +1,10 @@
 import SegmentedControl from "@react-native-segmented-control/segmented-control";
-import { FlatList, View, Text, TextInput, TouchableOpacity, Image } from "react-native";
+import { FlatList, View, Text, TextInput, TouchableOpacity } from "react-native";
 import { SettingsStyles as Styles, SettingsData } from "./Styles";
 import useAsyncStorage from "../helper/useAsyncStorage";
 import { MaterialIcons } from "@expo/vector-icons";
 import { useColorScheme } from "react-native";
-import * as Linking from 'expo-linking';
+import * as Linking from "expo-linking";
 import React from "react";
 
 export const SettingsOptions = {
@@ -15,7 +15,7 @@ export const SettingsOptions = {
 	),
 };
 
-export function Settings({navigation}) {
+export function Settings() {
 	const scheme = useColorScheme();
 	const [scanType, setScanType] = useAsyncStorage("@scanType", 0);
 	const [password, setPassword] = useAsyncStorage("@password", "");
@@ -149,7 +149,7 @@ export function Settings({navigation}) {
 				<TouchableOpacity
 					key={item.id} 
 					onPress={() => {
-						Linking.openURL("https://undeadd.github.io/TicketbirdMultiscan/" + item.link)
+						Linking.openURL("https://undeadd.github.io/TicketbirdMultiscan/" + item.link);
 					}}
 					activeOpacity={1}
 					style={[
